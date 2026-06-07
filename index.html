@@ -8,6 +8,12 @@
   /* ---- type ---- */
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Bitter:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:wght@400;500;700&display=swap');
 
+  /* ---- CUSTOM FONTS — update src when a file is added to /fonts/ ---- */
+  /* slot 1 */ /* @font-face{font-family:'SignFont1';src:url('fonts/font1.ttf');} */
+  /* slot 2 */ /* @font-face{font-family:'SignFont2';src:url('fonts/font2.ttf');} */
+  /* slot 3 */ /* @font-face{font-family:'SignFont3';src:url('fonts/font3.ttf');} */
+  /* slot 4 */ /* @font-face{font-family:'SignFont4';src:url('fonts/font4.ttf');} */
+
   :root{
     --ink:#f4ece0;        /* off-white "chalk/paint" */
     --board:#1c2b27;      /* deep board green */
@@ -444,6 +450,14 @@
       <button data-u="stems" class="on">Stems (5w)</button>
       <button data-u="inches">Inches</button>
     </div>
+    <label>Preview font</label>
+    <select id="specFontSel">
+      <option value="auto">Auto (by alphabet)</option>
+      <option value="SignFont1" disabled>— slot 1 (empty)</option>
+      <option value="SignFont2" disabled>— slot 2 (empty)</option>
+      <option value="SignFont3" disabled>— slot 3 (empty)</option>
+      <option value="SignFont4" disabled>— slot 4 (empty)</option>
+    </select>
     <p class="sub" id="specHeight" style="margin-top:12px"></p>
     <div id="specGrid" class="lettergrid"></div>
     <div id="specPreview" style="display:none;text-align:center;margin:6px 0 14px;padding:18px 0;background:var(--board2);border:1px solid var(--rule);border-radius:8px;">
@@ -1200,6 +1214,7 @@ document.getElementById('specUnits').addEventListener('click',e=>{
   specUnits=e.target.dataset.u; buildSpecGrid();
 });
 document.getElementById('specHt').addEventListener('input',updateSpec);
+document.getElementById('specFontSel').addEventListener('change',()=>{if(specSel)showSpec();});
 function specStem(){
   const h=parseFloat(document.getElementById('specHt').value)||0;
   if(h<=0) return 0;
@@ -1264,14 +1279,22 @@ function showSpec(){
     block:["'Oswald',sans-serif","Oswald — resembles Block"],
     classgothic:["'Oswald',sans-serif","Oswald — resembles Gothic"]
   };
-  const fm=FONT_MAP[specA]||FONT_MAP.classgothic;
+  const selFont=document.getElementById('specFontSel').value;
+  let fm, fontNote;
+  if(selFont!=='auto'){
+    fm=["'"+selFont+"',sans-serif",selFont];
+    fontNote='Preview: '+selFont+' (custom)';
+  } else {
+    fm=FONT_MAP[specA]||FONT_MAP.classgothic;
+    fontNote='Preview: '+fm[1]+' (approximation)';
+  }
   const gv=document.getElementById('specGlyphView');
   const isRoman=(specA==='roman'||specA==='dkroman');
   gv.style.fontFamily=fm[0];
   gv.style.fontWeight= isRoman?'700':'600';
   gv.style.fontSize='120px';
   gv.textContent=specSel;
-  document.getElementById('specFontNote').textContent='Preview: '+fm[1]+' (approximation)';
+  document.getElementById('specFontNote').textContent=fontNote;
   document.getElementById('specPreview').style.display='block';
   let wlabel, cat, atHeight='';
   if(A.dk){
