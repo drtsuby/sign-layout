@@ -6,7 +6,7 @@
 <title>Sign Painter's Companion</title>
 <style>
   /* ---- type ---- */
-  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Bitter:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Bitter:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:wght@400;500;700&display=swap');
 
   :root{
     --ink:#f4ece0;        /* off-white "chalk/paint" */
@@ -62,6 +62,17 @@
   main{max-width:760px;margin:0 auto;padding:20px 16px 80px;}
   .view{display:none;animation:fade .35s ease;}
   .view.on{display:block;}
+  /* sub-tab groups (Tools, Letters): subviews hidden unless their group is active AND selected */
+  .subview{display:none !important;}
+  body.tools-active .subview.grp-tools.on{display:block !important;}
+  body.letters-active .subview.grp-letters.on{display:block !important;}
+  body.tools-active #tools{display:block;}
+  body.letters-active #letters{display:block;}
+  .subnav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+  .subnav button{font-family:'Oswald',sans-serif;font-weight:500;text-transform:uppercase;
+    letter-spacing:.04em;font-size:13px;color:var(--muted);background:var(--board2);
+    border:1px solid var(--rule);border-radius:6px;padding:8px 16px;cursor:pointer;}
+  .subnav button.on{color:var(--board);background:var(--gold);border-color:var(--gold);}
   @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 
   .card{background:linear-gradient(180deg,var(--panel),var(--panel2));
@@ -258,17 +269,14 @@
 
 <nav id="nav">
   <button data-v="margins" class="on">Margins</button>
-  <button data-v="rows">Rows</button>
   <button data-v="letters">Letters</button>
-  <button data-v="scale">Scale</button>
-  <button data-v="specs">A&ndash;Z</button>
   <button data-v="sketch">Sketch</button>
   <button data-v="ideas">Ideas</button>
   <button data-v="shadow">Shadow</button>
   <button data-v="contrast">Contrast</button>
   <button data-v="colors">Colors</button>
-  <button data-v="ref">Reference</button>
-  <button data-v="kit">Kit</button>
+  <button data-v="fonts">Fonts</button>
+  <button data-v="tools">Tools</button>
 </nav>
 
 <main>
@@ -296,7 +304,17 @@
 </section>
 
 <!-- ===================== ROWS ===================== -->
-<section class="view" id="rows">
+<!-- ===================== TOOLS (wrapper) ===================== -->
+<section class="view" id="tools">
+  <div class="subnav" id="subnav">
+    <button data-s="rows" class="on">Rows</button>
+    <button data-s="scale">Scale</button>
+    <button data-s="ref">Reference</button>
+    <button data-s="kit">Kit</button>
+  </div>
+</section>
+
+<section class="view subview grp-tools on" id="rows" data-sub="1">
   <div class="card">
     <h2><span class="num">2</span>Row Divider</h2>
     <p class="sub">Even menu lines by the yardstick-teeter method &mdash; angle the stick to a number your item count divides into.</p>
@@ -313,8 +331,16 @@
   </div>
 </section>
 
-<!-- ===================== LETTERS ===================== -->
+<!-- ===================== LETTERS (wrapper) ===================== -->
 <section class="view" id="letters">
+  <div class="subnav" id="subnavL">
+    <button data-s="lwidths" class="on">Widths</button>
+    <button data-s="specs">A&ndash;Z</button>
+    <button data-s="lslope">Slope</button>
+  </div>
+</section>
+
+<section class="view subview grp-letters on" id="lwidths" data-sub="1">
   <div class="card">
     <h2><span class="num">3</span>Letter-Width Solver</h2>
     <p class="sub">Widths are relative: in any word, narrow &lt; normal &lt; wide. Spacing is always by eye.</p>
@@ -327,24 +353,29 @@
       <option value="western">Western — bars thicker than stems</option>
       <option value="casual">Casual — loose, downstrokes</option>
     </select>
-    <label>Cap height (in) <span style="text-transform:none;font-style:italic;color:var(--muted)">— sets stem for you</span></label>
-    <input type="number" id="lHeight" value="6" step="0.25" min="0.25">
-    <label>Weight</label>
-    <div class="seg" id="lWeight">
-      <button data-w="light">Light</button>
-      <button data-w="regular" class="on">Regular</button>
-      <button data-w="bold">Bold</button>
-    </div>
-    <label>Stem width (in) <span style="text-transform:none;font-style:italic;color:var(--muted)">— or set directly</span></label>
+    <label>Stem width (in)</label>
     <input type="number" id="lStem" value="1" step="0.125" min="0.0625">
     <div class="out" id="lOut"></div>
     <div class="tip" id="lTip"></div>
-    <svg id="lSvg" viewBox="0 0 400 170" aria-label="letter width preview"></svg>
+  </div>
+</section>
+
+<section class="view subview grp-letters" id="lslope" data-sub="1">
+  <div class="card">
+    <h2>Slant / Slope <span class="badge">Gage 1924</span></h2>
+    <p class="sub">For casual &amp; italic. There's no "correct" angle &mdash; pick one and <b>keep it the whole way</b>. Rule the sheet with parallel slant lines to guide your hand.</p>
+    <div class="row">
+      <div><label>Slope (° from vertical)</label><input type="number" id="slpDeg" value="12" step="1" min="0" max="35"></div>
+      <div><label>Cap height (in)</label><input type="number" id="slpH" value="6" step="0.25" min="0.5"></div>
+    </div>
+    <div class="out" id="slpOut"></div>
+    <svg id="slpSvg" viewBox="0 0 400 150" aria-label="slope guide preview"></svg>
+    <div class="note">Common show-card slopes run ~8&ndash;18°. The diagonal caps (A M V W X Y) must not tip past your chosen angle &mdash; keep them symmetrical to it.</div>
   </div>
 </section>
 
 <!-- ===================== SCALE ===================== -->
-<section class="view" id="scale">
+<section class="view subview grp-tools" id="scale" data-sub="1">
   <div class="card">
     <h2>Scale-Up &amp; Grid</h2>
     <p class="sub">Blow a sketch up to wall size. Get the multiplier, a grid to square it off, and convert any measurement.</p>
@@ -384,19 +415,41 @@
 </section>
 
 <!-- ===================== SPEC SHEET ===================== -->
-<section class="view" id="specs">
+<section class="view subview grp-letters" id="specs" data-sub="1">
   <div class="card">
     <h2>Per-Letter Specs</h2>
     <p class="sub">Per-letter widths from Lester (1903) and Matthews (1920) &mdash; the sources the course descends from. Tap a letter.</p>
     <label>Alphabet</label>
     <div class="seg" id="specAlpha">
-      <button data-a="block" class="on">Full Block</button>
+      <button data-a="classgothic" class="on">Class Gothic</button>
+      <button data-a="block">Full Block</button>
       <button data-a="roman">Roman</button>
+      <button data-a="dkroman">DK Roman</button>
       <button data-a="egyptian">Egyptian</button>
       <button data-a="halfblock">Half Block</button>
     </div>
+    <div class="row" style="margin-top:12px">
+      <div><label>Cap height (in)</label><input type="number" id="specHt" value="6" step="0.25" min="0.5"></div>
+      <div><label>Weight</label>
+        <div class="seg" id="specWt">
+          <button data-w="light">Light</button>
+          <button data-w="regular" class="on">Reg</button>
+          <button data-w="bold">Bold</button>
+        </div>
+      </div>
+    </div>
+    <div class="out" id="specStem" style="margin-top:12px"></div>
+    <label>Show tile widths as</label>
+    <div class="seg" id="specUnits">
+      <button data-u="stems" class="on">Stems (5w)</button>
+      <button data-u="inches">Inches</button>
+    </div>
     <p class="sub" id="specHeight" style="margin-top:12px"></p>
     <div id="specGrid" class="lettergrid"></div>
+    <div id="specPreview" style="display:none;text-align:center;margin:6px 0 14px;padding:18px 0;background:var(--board2);border:1px solid var(--rule);border-radius:8px;">
+      <div id="specGlyphView" style="line-height:1;color:var(--ink);"></div>
+      <div id="specFontNote" style="font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:10px;color:var(--muted);margin-top:10px;"></div>
+    </div>
     <div class="out" id="specDetail" style="display:none"></div>
     <div class="det-body" style="margin-top:16px"><ul>
       <li><b>Width</b> is in <b>strokes</b> (stems). "5w" = 5 stems wide.</li>
@@ -517,8 +570,34 @@
   </div>
 </section>
 
+<!-- ===================== FONTS ===================== -->
+<section class="view" id="fonts">
+  <div class="card">
+    <h2>Font Previewer</h2>
+    <p class="sub">Load your own font files (.ttf / .otf / .woff) to preview and compare. Type any text, stack as many as you like. Each font's <b>name &amp; your notes are saved</b> below; the font files themselves aren't, so re-load a file to see it rendered.</p>
+    <label>Sample text</label>
+    <input type="text" id="fontText" value="Sharp Quick Brown 1975" placeholder="Type sample text…">
+    <label style="margin-top:12px">Preview size</label>
+    <input type="range" id="fontSize" min="20" max="120" value="56" step="2" style="width:100%">
+    <div class="row" style="margin-top:14px;align-items:center;gap:10px">
+      <label class="fontload" style="margin:0;display:inline-flex;align-items:center;cursor:pointer;background:var(--gold);color:var(--board);border-radius:6px;padding:10px 18px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em;font-size:13px;">
+        + Load font files
+        <input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff" multiple style="display:none">
+      </label>
+      <button id="fontClear" class="seg-btn" style="background:var(--board2);color:var(--muted);border:1px solid var(--rule);border-radius:6px;padding:10px 16px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em;font-size:13px;cursor:pointer;">Clear all</button>
+    </div>
+    <div class="note" style="margin-top:10px">On iPad/iPhone, font files in Files or iCloud Drive can be picked here. Loading happens in your browser only.</div>
+  </div>
+  <div id="fontStack"></div>
+  <div class="card" id="savedFontsCard" style="display:none">
+    <h2>My Font List <span class="badge">saved</span></h2>
+    <p class="sub">Every font you load is remembered here by name &mdash; add a note (what it's good for). This list persists on the live site; the font files themselves aren't stored, so re-load a file to see it rendered.</p>
+    <div id="savedFonts"></div>
+  </div>
+</section>
+
 <!-- ===================== REFERENCE ===================== -->
-<section class="view ref" id="ref">
+<section class="view ref subview grp-tools" id="ref" data-sub="1">
   <div class="card">
     <h2>Emphasis &mdash; 4 Ways</h2>
     <p class="sub">Golden rule: something big / small / in-between &mdash; same for weight.</p>
@@ -609,10 +688,40 @@
       </ul>
     </div>
   </div>
+
+  <div class="card">
+    <h2>Casual &amp; Slope <span class="badge">Gage 1924</span></h2>
+    <p class="sub">Casual / Italic is a <i>sloped Roman</i>, closer to handwriting &mdash; made fast off the brush.</p>
+    <div class="det-body"><ul>
+      <li><b>Pick a slope and keep it.</b> There's no correct angle &mdash; but once chosen it must hold through the whole job. Rule the sheet with light parallel slant lines to guide hand and eye. (Slant tool on the Letters tab gives the lean.)</li>
+      <li><b>One firm stroke per element.</b> Keep the brush moving ahead &mdash; up, down, or forward, never backward against the stroke.</li>
+      <li>The swing of the casual lowercase comes from the <b>oval shapes</b> carried through the alphabet &mdash; that's where the motion lives.</li>
+      <li><b>Diagonal caps</b> (A M V W X Y) must not tip past your chosen slope &mdash; keep their angles symmetrical to it. On a level word they don't lean to either side.</li>
+      <li>Inclined panel or ribbon: keep letters at a <b>uniform angle</b>, vertical or perpendicular to the panel &mdash; don't twist each to follow the surface (ICS).</li>
+      <li>Always keep numbers &amp; prices plain, and give the price the emphasis.</li>
+    </ul></div>
+  </div>
+
+  <div class="card">
+    <h2>Roman Construction <span class="badge">Kynaston (DK) 2024</span></h2>
+    <p class="sub">The beauty of Roman is the simplicity of the letter. Think of letters as <i>architecture &mdash; functional first, then decorative</i>. Learn the classics and the rest falls into place.</p>
+    <div class="det-body">
+      <p class="trait">Built on a 10-point system (cap = 10 points high). Widths in the DK Roman A&ndash;Z.</p>
+      <ul>
+        <li><b>Marking out:</b> rule line A/B, then A/C; divide A/C into 10 equal parts; project points 1&ndash;10 across to A/B; copy the 10 points onto a set square for fast marking.</li>
+        <li><b>Everything fits a circle or a square</b> with even proportions throughout.</li>
+        <li><b>All "straight" lines are drawn slightly concave</b> &mdash; never dead-flat. Round letters: compass first, finish freehand, 15° compass offset, 45° stress.</li>
+        <li><b>Serifs</b> just under 1 point wide; <b>stems</b> 1 point; <b>bars/spurs</b> ½ point.</li>
+        <li><b>The S</b> &mdash; the letter most sign writers struggle with &mdash; is two equal circles, the top one ½-point forward of the bottom. Master it; you're judged by it.</li>
+        <li>Curves project slightly past the guides; angled points (N etc.) go just past the guide lines. M &amp; W centres are the same.</li>
+      </ul>
+      <p class="trait"><b>Spacing:</b> two straights = 3 points · straight + curve = 2 points · two curves = 1 point. <b>Double spacing is ideal for Roman.</b></p>
+    </div>
+  </div>
 </section>
 
 <!-- ===================== KIT ===================== -->
-<section class="view ref" id="kit">
+<section class="view ref subview grp-tools" id="kit" data-sub="1">
   <div class="card">
     <h2>Brushes <span class="badge">natural squirrel</span></h2>
     <p class="sub">Brown = softer · Gray = stiffer. Series #s below (brown / gray).</p>
@@ -708,9 +817,25 @@ nav.addEventListener('click',e=>{
   if(e.target.tagName!=='BUTTON')return;
   const v=e.target.dataset.v;
   [...nav.children].forEach(b=>b.classList.toggle('on',b===e.target));
-  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id===v));
+  document.querySelectorAll('.view:not(.subview)').forEach(s=>s.classList.toggle('on',s.id===v));
+  document.body.classList.toggle('tools-active', v==='tools');
+  document.body.classList.toggle('letters-active', v==='letters');
   window.scrollTo({top:0,behavior:'smooth'});
 });
+/* ---------- sub-navs (Tools, Letters) ---------- */
+function wireSubnav(navId, grpClass){
+  const sn=document.getElementById(navId);
+  if(!sn) return;
+  sn.addEventListener('click',e=>{
+    if(e.target.tagName!=='BUTTON')return;
+    const sv=e.target.dataset.s;
+    [...sn.children].forEach(b=>b.classList.toggle('on',b===e.target));
+    document.querySelectorAll('.subview.'+grpClass).forEach(s=>s.classList.toggle('on',s.id===sv));
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+}
+wireSubnav('subnav','grp-tools');
+wireSubnav('subnavL','grp-letters');
 
 /* ---------- MARGINS ---------- */
 let mRule=0.15;
@@ -813,10 +938,10 @@ const SPACE_RULES={
 };
 const SPACE_FAM={gothic:'spur',roman:'spur',phoenix:'plain',thickthin:'spur',western:'spur',casual:'plain'};
 const ALPHA={
-  gothic:{name:'Gothic',normal:3.5,narrow:2.625,wide:5,extra:7,
+  gothic:{name:'Gothic (Class)',normal:3.5,narrow:2.5,wide:4.5,mid:5,extra:7,
     barRule:'Bars & diagonals a tick thinner than stems.',
-    note:'Reference widths in stems — narrow 2.5–2¾, A/V/X/Y & O = 4.5, M = 5, W = 7.',
-    cats:'Narrow: L J F E I · Wide: M W · Appear-wide (4.5): A V X Y'},
+    note:'Course chart (Class Gothic): narrow 2½ (L F J), E 2¾, normal 3½, A/V/X/Y & O/Q = 4½, M = 5, W = 7. U = 4, C/D/&/G ≈ 3¾–4¼.',
+    cats:'Narrow (NW): L J F E I · Wide (W): A V X Y M W · normal: most others'},
   phoenix:{name:'Phoenix',normal:3,narrow:2,wide:5,extra:5,
     barRule:'Flat sides, curves only top/bottom. Bars a tick thinner (never thicker).',
     note:'Counts are STEMS-wide incl. counter. Prefer counter slightly narrower than stem. Tight spacing.',
@@ -839,44 +964,29 @@ const ALPHA={
     cats:'Throwaway/loose copy, "since 1955".'},
 };
 ['lAlpha','lStem'].forEach(id=>document.getElementById(id).addEventListener('input',calcLetters));
-/* stem-from-height: ratios are stem = height / divisor (bigger = lighter) */
+/* stem-from-height ratios (stem = height / divisor) — used by the A–Z tab */
 const STEM_RATIO={
+  classgothic:{light:7,regular:6,bold:4.5},
   gothic:{light:7,regular:6,bold:4.5},
+  block:{light:7,regular:6,bold:4.5},
   phoenix:{light:7,regular:6,bold:4.5},
   roman:{light:8,regular:7,bold:5.5},
+  egyptian:{light:7,regular:6,bold:5},
+  halfblock:{light:7,regular:6,bold:5},
   thickthin:{light:8,regular:7,bold:5.5},
   western:{light:6,regular:5,bold:4},
   casual:{light:7,regular:6,bold:5},
 };
-let lWeight='regular';
-function stemFromHeight(){
-  const h=parseFloat(lHeight.value)||0;
-  if(h<=0) return;
-  const div=STEM_RATIO[lAlpha.value][lWeight];
-  const stem=Math.round((h/div)*16)/16;   // snap to 1/16"
-  document.getElementById('lStem').value=stem;
-  calcLetters();
-}
-document.getElementById('lHeight').addEventListener('input',stemFromHeight);
-document.getElementById('lWeight').addEventListener('click',e=>{
-  if(e.target.tagName!=='BUTTON')return;
-  [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));
-  lWeight=e.target.dataset.w; stemFromHeight();
-});
-document.getElementById('lAlpha').addEventListener('change',stemFromHeight);
 function calcLetters(){
   const a=ALPHA[lAlpha.value], stem=parseFloat(lStem.value)||0;
   const out=document.getElementById('lOut'), tip=document.getElementById('lTip');
   if(stem<=0){out.innerHTML='';return;}
-  const h=parseFloat(lHeight.value)||0;
   const bar = lAlpha.value==='western' ? stem*1.4 : stem*0.85;
   out.innerHTML =
-    (h>0?line('Cap height', both(h)):'') +
-    line('Stem', both(stem), h>0?'1 : '+(h/stem).toFixed(1)+' of height':'') +
+    line('Stem', both(stem)) +
     line('Normal letter', both(a.normal*stem), a.normal+' stems') +
-    line('Narrow letter', both(a.narrow*stem), a.narrow+' stems') +
-    line('Wide (A/V/X/Y or O)', both(a.wide*stem), a.wide+' stems') +
-    line('M / W', both(a.extra*stem), a.extra+' stems') +
+    line('Narrow (L J F E)', both(a.narrow*stem), a.narrow+' stems') +
+    line('Wide (M W)', both(a.extra*stem), a.extra+' stems') +
     line(lAlpha.value==='western'?'Bar (thicker!)':'Bar / diagonal', both(bar), lAlpha.value==='western'?'~1.4× stem':'tick thinner');
   // ICS 1902 spacing gaps, scaled to this stem
   const fam=SPACE_FAM[lAlpha.value], sp=SPACE_RULES[fam];
@@ -896,38 +1006,43 @@ function calcLetters(){
       line('· word space', both(stem*sp.word), '≥1 letter, aim 1½');
   }
   out.innerHTML += '<div class="line" style="border-bottom:none;padding-top:10px"><span class="k" style="color:var(--gold)">Spacing (start here, then eye it)</span><span class="v"></span></div>' + spaceRows;
-  // distorted flag: stem too heavy for the height (skip Western — it breaks the rule on purpose)
-  let warn='';
-  if(h>0 && lAlpha.value!=='western'){
-    const ratio=stem/h;
-    if(ratio>0.25) warn='<br><span style="color:var(--gold)">⚠ Stem is heavy for this height ('+(ratio*100).toFixed(0)+'% of cap) — getting into distorted territory. Lighten the weight or raise the height.</span>';
-    else if(ratio>0.20) warn='<br><span style="color:var(--muted)">Bold-ish ('+(ratio*100).toFixed(0)+'% of cap) — still reads, but watch it doesn\'t crowd.</span>';
-  }
-  tip.innerHTML='<b>'+a.barRule+'</b><br>'+a.note+'<br><span style="color:var(--gold)">'+a.cats+'</span>'+warn;
-  drawLetters(a,stem);
+  tip.innerHTML='<b>'+a.barRule+'</b><br>'+a.note+'<br><span style="color:var(--gold)">'+a.cats+'</span>';
 }
-function drawLetters(a,stem){
-  const svg=document.getElementById('lSvg');
-  const vw=400,vh=170,baseY=20,topY=20,h=130;
-  // draw three width blocks: narrow, normal, wide, scaled
-  const widths=[a.narrow,a.normal,a.wide].map(x=>x*stem);
-  const total=widths.reduce((s,x)=>s+x,0)+ (stem*2); // + spacing
-  const sc=Math.min(360/total, 90/ (a.wide*stem) || 1);
-  let x=20; let s=`<line x1="10" y1="${topY}" x2="390" y2="${topY}" stroke="#3c5950" stroke-width="1"/>
-    <line x1="10" y1="${topY+h}" x2="390" y2="${topY+h}" stroke="#3c5950" stroke-width="1"/>`;
-  const labels=['narrow','normal','wide'];
-  widths.forEach((wpx,i)=>{
-    const W=wpx*sc;
-    const stemW=Math.max(3,stem*sc);
-    // simple "stick letter" box w/ stems
-    s+=`<rect x="${x}" y="${topY}" width="${W}" height="${h}" fill="none" stroke="#9bb0a7" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>`;
-    s+=`<rect x="${x}" y="${topY}" width="${stemW}" height="${h}" fill="#d6a93b" opacity="0.9"/>`;
-    s+=`<rect x="${x+W-stemW}" y="${topY}" width="${stemW}" height="${h}" fill="#d6a93b" opacity="0.9"/>`;
-    s+=`<text x="${x+W/2}" y="${topY+h+16}" fill="#9bb0a7" font-family="Oswald,sans-serif" font-size="11" text-anchor="middle" text-transform="uppercase">${labels[i]}</text>`;
-    x+=W+stem*sc;
-  });
+
+/* ---------- SLANT / SLOPE helper (Gage 1924) ---------- */
+function calcSlope(){
+  const deg=parseFloat(document.getElementById('slpDeg').value)||0;
+  const h=parseFloat(document.getElementById('slpH').value)||0;
+  const out=document.getElementById('slpOut');
+  const t=Math.tan(deg*Math.PI/180);
+  const perInch=t, perCap=h*t;
+  out.innerHTML =
+    line('Slope', deg+'° from vertical') +
+    line('Top leans forward', both(perCap), 'over '+dec(h)+' cap') +
+    line('Lean per inch of height', both(perInch), 'for ruling slant lines') +
+    line('Rise : run', deg===0?'vertical':('1 : '+(1/t).toFixed(2)), 'up : sideways');
+  drawSlope(deg);
+}
+function drawSlope(deg){
+  const svg=document.getElementById('slpSvg');
+  const vw=400, vh=150, pad=18, h=vh-pad*2, baseY=vh-pad, topY=pad;
+  const t=Math.tan(deg*Math.PI/180);
+  let s='';
+  // baseline
+  s+=`<line x1="20" y1="${baseY}" x2="${vw-20}" y2="${baseY}" stroke="#d6a93b" stroke-width="1.5"/>`;
+  // parallel slant guide lines
+  for(let gx=60; gx<vw-20; gx+=46){
+    const x1=gx, x2=gx + h*t;   // top shifts right by h*tan
+    s+=`<line x1="${x1}" y1="${baseY}" x2="${x2}" y2="${topY}" stroke="#3c5950" stroke-width="1" stroke-dasharray="4 4"/>`;
+  }
+  // one bold reference slant + a faint vertical to show the angle
+  const bx=120;
+  s+=`<line x1="${bx}" y1="${baseY}" x2="${bx}" y2="${topY}" stroke="#9bb0a7" stroke-width="0.75" stroke-dasharray="2 3"/>`;
+  s+=`<line x1="${bx}" y1="${baseY}" x2="${bx+h*t}" y2="${topY}" stroke="#f4ece0" stroke-width="2"/>`;
+  s+=`<text x="${bx+h*t+8}" y="${topY+10}" fill="#f4ece0" font-family="Oswald,sans-serif" font-size="12">${deg}°</text>`;
   svg.innerHTML=s;
 }
+['slpDeg','slpH'].forEach(id=>document.getElementById(id).addEventListener('input',calcSlope));
 
 /* ---------- build alphabet reference ---------- */
 (function(){
@@ -948,6 +1063,20 @@ function drawLetters(a,stem){
 
 /* ---------- SPEC SHEET (Lester 1903 data) ---------- */
 const LESTER={
+ classgothic:{height:'5 strokes tall · the course Gothic (Jurakart / Olson) · widths in stems, by eye',
+  cat:'<b>Narrow (NW):</b> E F I J L. <b>Wide (W):</b> A M V W X Y. All others normal. Spacing always by eye.',
+  L:{
+   A:[4.5,'W · symmetrical'],B:[3.5,''],C:[3.75,'curved — slightly overlaps guidelines'],
+   D:[3.75,''],E:[2.75,'NW · center bar'],F:[2.5,'NW · bar slightly lower than E'],
+   G:[4.25,'curved'],H:[3.5,'centered bar'],I:[1,'NW · single stem, no serifs'],
+   J:[2.5,'NW'],K:[3.5,'leg extends slightly past top'],L:[2.5,'NW'],
+   M:[5,'W · counters even, top slightly smaller'],N:[3.5,''],
+   O:[4.5,'curved — slightly overlaps top & bottom'],P:[3.5,'bar lowest of B/P/R'],
+   Q:[4.5,'curved · tail below base'],R:[3.5,'bar higher than P, leg extends'],
+   S:[3.5,'curved'],T:[3.5,'symmetrical'],U:[4,''],V:[4.5,'W · symmetrical'],
+   W:[7,'W · widest'],X:[4.5,'W · legs extend slightly'],Y:[4.5,'W'],Z:[3.5,''],
+   '&':[3.75,'']
+  }},
  block:{height:'5 strokes tall · general space between letters = 2 strokes',
   cat:'<b>Narrow:</b> I (1w). <b>Wide:</b> M (6w), W (7w). All others 5w.',
   L:{ // widths in strokes for category coloring
@@ -1021,41 +1150,148 @@ const LESTER={
    M:[5,'fills the square'],N:[4,''],O:[4,''],P:[4,''],Q:[4.5,'slightly wider than 4/5'],R:[4,''],
    S:[4,''],T:[4,''],U:[4,''],V:[4,''],W:[6,'wider than the square'],X:[4,''],Y:[5,'fills the square'],Z:[4,''],'&':[4,'']
   }},
+ dkroman:{height:'10-point system · cap = 10 points high · widths in points · stems 1 · serifs just under 1 · bars/spurs ½',
+  cat:'<b>Round/wide:</b> C D G H N U V X Y = 9, O = 10, Q = 10/14, M = 11. <b>Narrow:</b> I = 1, J = 3. Spacing: 2 straights = 3pts · straight+curve = 2pts · 2 curves = 1pt. <b>Double spacing ideal.</b>',
+  dk:true,
+  L:{
+   A:[9,'centre the crossbar halfway · apex 1/½'],
+   B:[5,'4½/5 · upper bowl smaller · compass 1pt away at 15°'],
+   C:[9,'compass then finish freehand · 45° stress'],
+   D:[9,'1-point inner curve'],
+   E:[5,'4½/5 · bar ½'],
+   F:[5,'bar ½ · 15° serif'],
+   G:[9,'same circle as C · 15° stress'],
+   H:[9,'stem 1'],
+   I:[1,'centre line · serifs just under 1pt'],
+   J:[3,'outside curve compass point · 1 wide'],
+   K:[8,'45° angles · freehand-drawn curve on leg'],
+   L:[5,''],
+   M:[11,'equal widths · ½ apex · M & W centres the same'],
+   N:[9,'angled points go just past guide lines'],
+   O:[10,'freehand · stem 1 · 45° stress'],
+   P:[5,'stem 1'],
+   Q:[10,'O at 10 + tail extends to ~14'],
+   R:[7,'bowl 5 / leg kicks to 7 · serif ½'],
+   S:[5,'two equal circles · top ½-point forward · the hardest letter'],
+   T:[8,''],
+   U:[9,'sides slightly concave'],
+   V:[9,'slightly convex · curves project past guides'],
+   W:[11,'built as M + N · 4/7/4 · ½ apex · stem 1'],
+   X:[8,'½ serifs'],
+   Y:[8,'½ serifs'],
+   Z:[8.5,'½ serifs'],
+   '&':[6,'']
+  }},
 };
-let specA='block', specSel=null;
+let specA='classgothic', specSel=null, specWt='regular', specUnits='stems';
 document.getElementById('specAlpha').addEventListener('click',e=>{
   if(e.target.tagName!=='BUTTON')return;
   [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));
-  specA=e.target.dataset.a; specSel=null; buildSpecGrid();
+  specA=e.target.dataset.a; specSel=null; updateSpec();
 });
-function widthClass(w){ if(w<=2)return'narrow'; if(w>=6)return'wide'; return''; }
+document.getElementById('specWt').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));
+  specWt=e.target.dataset.w; updateSpec();
+});
+document.getElementById('specUnits').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));
+  specUnits=e.target.dataset.u; buildSpecGrid();
+});
+document.getElementById('specHt').addEventListener('input',updateSpec);
+function specStem(){
+  const h=parseFloat(document.getElementById('specHt').value)||0;
+  if(h<=0) return 0;
+  const div=(STEM_RATIO[specA]||STEM_RATIO.gothic)[specWt];
+  return Math.round((h/div)*16)/16;
+}
+function widthClass(w,note){
+  if(note){ if(/\bNW\b/.test(note))return'narrow'; if(/(^|\s)W( |·|$)/.test(note))return'wide'; }
+  if(w<=2.75)return'narrow'; if(w>=4.5)return'wide'; return'';
+}
+function updateSpec(){
+  const h=parseFloat(document.getElementById('specHt').value)||0;
+  const stem=specStem();
+  const so=document.getElementById('specStem');
+  if(stem>0){
+    const ratio=(h/stem).toFixed(1);
+    let warn='';
+    if(specA!=='western'){ const r=stem/h;
+      if(r>0.25) warn=' <small style="color:var(--gold)">⚠ heavy — distorted territory</small>';
+      else if(r>0.20) warn=' <small>bold-ish</small>'; }
+    so.innerHTML=line('Stem at '+dec(h), both(stem), '1 : '+ratio+' of height'+warn);
+  } else so.innerHTML='';
+  buildSpecGrid();
+}
 function buildSpecGrid(){
-  const A=LESTER[specA];
+  const A=LESTER[specA], stem=specStem();
   document.getElementById('specHeight').innerHTML=A.height;
   document.getElementById('specCat').innerHTML=A.cat;
   const grid=document.getElementById('specGrid');
   grid.innerHTML='';
   Object.keys(A.L).forEach(ch=>{
-    const [w]=A.L[ch];
+    const [w,note]=A.L[ch];
     const b=document.createElement('button');
-    b.className=widthClass(w);
-    b.innerHTML=ch+'<span class="ww">'+w+'w</span>';
+    b.className = A.dk ? (w<=3?'narrow':(w>=9?'wide':'')) : widthClass(w,note);
+    let sub;
+    if(A.dk){
+      const capH=parseFloat(document.getElementById('specHt').value)||0;
+      sub = (specUnits==='inches' && capH>0) ? dec(w/10*capH) : w+'pt';
+    } else {
+      sub = (specUnits==='inches' && stem>0) ? dec(w*stem) : w+'w';
+    }
+    b.innerHTML=ch+'<span class="ww">'+sub+'</span>';
     b.onclick=()=>{ specSel=ch; [...grid.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); showSpec(); };
     grid.appendChild(b);
   });
-  document.getElementById('specDetail').style.display='none';
+  document.getElementById('specDetail').style.display = specSel?'block':'none';
+  document.getElementById('specPreview').style.display = specSel?'block':'none';
+  if(specSel) showSpec();
 }
 function showSpec(){
   const [w,note]=LESTER[specA].L[specSel];
   const d=document.getElementById('specDetail');
   d.style.display='block';
-  const cat = w<=2?'Narrow':(w>=5.5?'Wide':(w>=4.5?'Wide (round)':'Normal'));
-  const wlabel = LESTER[specA].prop ? '≈'+w+' wide (of 5 tall)' : w+' strokes';
+  const A=LESTER[specA];
+  const stem=specStem();
+  // letter preview in a font that resembles the assigned style
+  const FONT_MAP={
+    dkroman:["'Playfair Display',serif","Playfair Display — resembles Roman"],
+    roman:["'Playfair Display',serif","Playfair Display — resembles Roman"],
+    egyptian:["'Bitter',serif","Bitter — slab / Egyptian"],
+    halfblock:["'Oswald',sans-serif","Oswald — resembles Half Block"],
+    block:["'Oswald',sans-serif","Oswald — resembles Block"],
+    classgothic:["'Oswald',sans-serif","Oswald — resembles Gothic"]
+  };
+  const fm=FONT_MAP[specA]||FONT_MAP.classgothic;
+  const gv=document.getElementById('specGlyphView');
+  const isRoman=(specA==='roman'||specA==='dkroman');
+  gv.style.fontFamily=fm[0];
+  gv.style.fontWeight= isRoman?'700':'600';
+  gv.style.fontSize='120px';
+  gv.textContent=specSel;
+  document.getElementById('specFontNote').textContent='Preview: '+fm[1]+' (approximation)';
+  document.getElementById('specPreview').style.display='block';
+  let wlabel, cat, atHeight='';
+  if(A.dk){
+    // 10-point system: width is in points out of 10 (cap height); inches = w/10 × capHeight
+    wlabel = w+' points';
+    cat = w<=3?'Narrow':(w>=10?'Widest':(w>=9?'Wide':'Normal'));
+    const capH = parseFloat(document.getElementById('specHt').value)||0;
+    if(capH>0) atHeight = line('At this height', both(w/10*capH), 'of '+dec(capH)+' cap');
+  } else {
+    wlabel = A.prop ? '≈'+w+' wide (of 5 tall)' : w+' strokes';
+    cat = w<=2.75?'Narrow':(w>=5.5?'Wide':(w>=4.5?'Wide (round/slant)':'Normal'));
+    if(stem>0) atHeight = line('At this height', both(w*stem));
+  }
   d.innerHTML = line('Letter','<span style="font-family:Oswald;font-size:22px">'+specSel+'</span>') +
     line('Width', wlabel, cat) +
+    atHeight +
     (note?line('Note', note):'');
 }
-buildSpecGrid();
+/* construction-guide SVG removed — A–Z is spec text only */
+updateSpec();
 
 /* ---------- SKETCHER ---------- */
 let blocks=[
@@ -1556,7 +1792,101 @@ document.getElementById('idRoll').addEventListener('click',rollIdea);
 rollIdea();
 
 /* init */
-calcMargins();calcRows();stemFromHeight();calcShadow();calcContrast();calcScale();
+/* ---------- FONT PREVIEWER ---------- */
+(function(){
+  const fileIn=document.getElementById('fontFile');
+  const textIn=document.getElementById('fontText');
+  const sizeIn=document.getElementById('fontSize');
+  const clearBtn=document.getElementById('fontClear');
+  const stack=document.getElementById('fontStack');
+  const savedCard=document.getElementById('savedFontsCard');
+  const savedWrap=document.getElementById('savedFonts');
+  const styleEl=document.createElement('style');
+  document.head.appendChild(styleEl);
+  let loaded=[]; let n=0;
+  const KEY='spc_fonts';
+
+  /* ---- saved list (localStorage; degrades gracefully if unavailable) ---- */
+  function loadSaved(){
+    try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ return []; }
+  }
+  function writeSaved(list){
+    try{ localStorage.setItem(KEY, JSON.stringify(list)); }catch(e){}
+  }
+  function rememberFont(name){
+    const list=loadSaved();
+    if(!list.some(f=>f.name===name)){ list.push({name:name, note:''}); writeSaved(list); }
+    renderSaved();
+  }
+  function renderSaved(){
+    const list=loadSaved();
+    savedCard.style.display = list.length?'block':'none';
+    savedWrap.innerHTML = list.map((f,i)=>(
+      '<div class="line" style="display:flex;align-items:center;gap:8px;padding:9px 0">'+
+        '<span style="flex:0 0 auto;font-weight:600;color:var(--ink)">'+f.name.replace(/[<>&]/g,'')+'</span>'+
+        '<input data-i="'+i+'" class="fontNote" value="'+(f.note||'').replace(/"/g,'&quot;')+'" placeholder="note — what it\u2019s good for" '+
+          'style="flex:1 1 auto;min-width:0;background:var(--board2);border:1px solid var(--rule);border-radius:5px;color:var(--ink);padding:6px 9px;font-size:13px">'+
+        '<button data-i="'+i+'" class="fontForget" style="flex:0 0 auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">&times;</button>'+
+      '</div>'
+    )).join('');
+    savedWrap.querySelectorAll('.fontNote').forEach(inp=>{
+      inp.onchange=()=>{ const l=loadSaved(); l[+inp.dataset.i].note=inp.value; writeSaved(l); };
+    });
+    savedWrap.querySelectorAll('.fontForget').forEach(b=>{
+      b.onclick=()=>{ const l=loadSaved(); l.splice(+b.dataset.i,1); writeSaved(l); renderSaved(); };
+    });
+  }
+
+  /* ---- live previews ---- */
+  function render(){
+    const txt=textIn.value||'Abc 123';
+    const sz=sizeIn.value;
+    const esc=s=>s.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+    stack.innerHTML = loaded.map(f=>(
+      '<div class="card" style="padding:16px">'+
+        '<div style="font-family:\'Oswald\',sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
+          '<span>'+esc(f.name)+'</span>'+
+          '<button data-id="'+f.fam+'" class="fontDel" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1">&times;</button>'+
+        '</div>'+
+        '<div style="font-family:\''+f.fam+'\';font-size:'+sz+'px;line-height:1.15;color:var(--ink);text-align:center;word-break:break-word">'+esc(txt)+'</div>'+
+      '</div>'
+    )).join('') || '<p class="sub" style="text-align:center;padding:24px 0">No fonts loaded yet. Tap <b>Load font files</b> above.</p>';
+    stack.querySelectorAll('.fontDel').forEach(b=>b.onclick=()=>{
+      loaded=loaded.filter(f=>f.fam!==b.dataset.id); render();
+    });
+  }
+
+  fileIn.addEventListener('change',e=>{
+    const files=[...e.target.files];
+    let pending=files.length;
+    if(!pending) return;
+    files.forEach(file=>{
+      const r=new FileReader();
+      const nm=file.name.replace(/\.[^.]+$/,'');
+      r.onload=()=>{
+        const fam='userfont'+(n++);
+        const fmt = /\.otf$/i.test(file.name)?'opentype' : /\.woff2$/i.test(file.name)?'woff2' : /\.woff$/i.test(file.name)?'woff' : 'truetype';
+        styleEl.appendChild(document.createTextNode(
+          "@font-face{font-family:'"+fam+"';src:url('"+r.result+"') format('"+fmt+"');}"
+        ));
+        loaded.push({name:nm, fam});
+        rememberFont(nm);          // auto-save to the list
+        if(--pending===0) render();
+      };
+      r.onerror=()=>{ if(--pending===0) render(); };
+      r.readAsDataURL(file);
+    });
+    fileIn.value='';
+  });
+  clearBtn.addEventListener('click',()=>{ loaded=[]; render(); });
+  textIn.addEventListener('input',render);
+  sizeIn.addEventListener('input',render);
+  render();
+  renderSaved();
+})();
+
+calcMargins();calcRows();calcLetters();calcSlope();calcShadow();calcContrast();calcScale();
+
 </script>
 <script>
 /* ---- offline service worker (inline, cache the page) ---- */
