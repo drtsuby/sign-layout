@@ -1828,10 +1828,34 @@ const ID_BIZ=[
  {t:"Surf shop",names:["Lowtide","Saltwater","Drift"],emph:"SURF",alpha:["Casual","Gothic"],tier:"mid"},
  {t:"Pizza parlor",names:["King's","Vesuvio","Slice"],emph:"PIZZA",alpha:["Gothic","Casual"],tier:"workaday"},
  {t:"Ice cream stand",names:["Frostline","Penny's","Bluebird"],emph:"ICE CREAM",alpha:["Casual","Gothic"],tier:"workaday"},
+ {t:"Brewery / taproom",names:["Ironwood","Cellarman","Foghorn"],emph:"BREWERY",alpha:["Gothic","Western","Roman"],tier:"mid"},
+ {t:"Bookshop",names:["Marginalia","Foxed Pages","The Quill"],emph:"BOOKS",alpha:["Roman","Old English"],tier:"high-end"},
+ {t:"Record store",names:["Groove","Wax & Wane","Static"],emph:"RECORDS",alpha:["Gothic","Casual"],tier:"mid"},
+ {t:"Bike shop",names:["Cog & Sprocket","Tailwind","Pedalers"],emph:"BIKES",alpha:["Gothic","Phoenix"],tier:"workaday"},
+ {t:"Taqueria",names:["El Vega","La Paloma","Tres Hermanos"],emph:"TACOS",alpha:["Casual","Gothic"],tier:"workaday"},
+ {t:"Deli",names:["Katz & Son","Corner","Maple St."],emph:"DELI",alpha:["Gothic","Script"],tier:"workaday"},
+ {t:"Garden nursery",names:["Greenhouse","Fernwood","Trowel & Co."],emph:"NURSERY",alpha:["Script","Casual","Roman"],tier:"mid"},
+ {t:"Pet groomer",names:["Top Dog","Whiskers","Pawsh"],emph:"GROOMING",alpha:["Casual","Gothic"],tier:"workaday"},
+ {t:"Jeweler",names:["Sterling","Aurora","Beaumont"],emph:"JEWELRY",alpha:["Roman","Script"],tier:"high-end"},
+ {t:"Cinema / theater",names:["The Rialto","Starlight","Vista"],emph:"CINEMA",alpha:["Gothic","Roman","Western"],tier:"high-end"},
+ {t:"Gym / boxing club",names:["Ironside","Title","Eastside"],emph:"GYM",alpha:["Gothic","Egyptian"],tier:"workaday"},
+ {t:"Locksmith",names:["Tumbler","Ace Key","Bolt & Co."],emph:"LOCKSMITH",alpha:["Gothic","Egyptian"],tier:"workaday"},
+ {t:"Shoe repair",names:["Cobbler's","Heel & Sole","Vargas"],emph:"SHOE REPAIR",alpha:["Roman","Gothic"],tier:"workaday"},
+ {t:"BBQ joint",names:["Smokestack","Brisket Bros","Piggy's"],emph:"BBQ",alpha:["Western","Casual","Gothic"],tier:"workaday"},
+ {t:"Donut shop",names:["Sunrise","Glaze","Holey Roller"],emph:"DONUTS",alpha:["Casual","Gothic"],tier:"workaday"},
+ {t:"Apothecary / pharmacy",names:["Mortar & Pestle","Hale's","Remedy"],emph:"PHARMACY",alpha:["Roman","Gothic"],tier:"mid"},
+ {t:"Vintage clothing",names:["Second Act","Maven","Thread"],emph:"VINTAGE",alpha:["Script","Roman","Casual"],tier:"mid"},
+ {t:"Art gallery",names:["Greyscale","Atelier","North Light"],emph:"GALLERY",alpha:["Roman","Gothic"],tier:"high-end"},
+ {t:"Motel / inn",names:["Starlite","Wayfarer","Blue Sail"],emph:"MOTEL",alpha:["Gothic","Casual","Script"],tier:"mid"},
+ {t:"Candy shop",names:["Sweet Tooth","Penny Lane","Sugar Hill"],emph:"CANDY",alpha:["Casual","Script","Roman"],tier:"workaday"},
+ {t:"Cheese shop",names:["The Cellar","Cured","Alpine"],emph:"CHEESE",alpha:["Roman","Script"],tier:"mid"},
+ {t:"Wine & spirits",names:["Corkscrew","Vintner's","Harbor"],emph:"WINE",alpha:["Roman","Script","Gothic"],tier:"high-end"},
+ {t:"Watch & clock repair",names:["Tick Tock","Geneva","Horloge"],emph:"WATCH REPAIR",alpha:["Roman","Gothic"],tier:"mid"},
+ {t:"Print shop",names:["Letterpress","Inkwell","Quoin"],emph:"PRINTING",alpha:["Egyptian","Gothic","Roman"],tier:"workaday"},
 ];
-const ID_SIZES=[{w:24,h:36,n:"portrait panel"},{w:48,h:24,n:"wide signboard"},{w:18,h:48,n:"tall skinny — lean Phoenix"},{w:36,h:36,n:"square"},{w:60,h:18,n:"long banner"},{w:24,h:18,n:"small shop card"}];
-const ID_PANELS=["weenie panel","pinched-center panel","notched corners","oval background panel","banner","contour cut to the copy"];
-const ID_TAGS=["est. 1955","since 1948","open daily","fresh","two locations","family owned","on the pier","cold beer"];
+const ID_SIZES=[{w:24,h:36,n:"portrait panel"},{w:48,h:24,n:"wide signboard"},{w:18,h:48,n:"tall skinny — lean Phoenix"},{w:36,h:36,n:"square"},{w:60,h:18,n:"long banner"},{w:24,h:18,n:"small shop card"},{w:30,h:40,n:"A-frame face"},{w:96,h:18,n:"long fascia band"},{w:12,h:18,n:"window card"},{w:42,h:30,n:"sandwich board"},{w:30,h:30,n:"hanging blade sign"},{w:72,h:36,n:"storefront fascia"}];
+const ID_PANELS=["weenie panel","pinched-center panel","notched corners","oval background panel","banner","contour cut to the copy","ribbon banner","scroll-end panel","keyhole panel","double-rule border","drop-shadow box","shield / crest"];
+const ID_TAGS=["est. 1955","since 1948","open daily","fresh","two locations","family owned","on the pier","cold beer","open late","by appointment","wholesale & retail","best in town","walk-ins welcome","we deliver","free estimates","quality since 1939"];
 const ID_GROUND={"high-end":["dark ground + gold leaf","cream + maroon","black + gold"],"mid":["dark green + cream","navy + buff","black + white"],"workaday":["red + white","black + yellow","white + black"]};
 let idMode='simple';
 const idPick=a=>a[Math.floor(Math.random()*a.length)];
@@ -1842,6 +1866,11 @@ const ID_PRODUCE=[
  ["Cantaloupe","ea","2.99",1],["Red Grapes","lb","1.99",1],["Romaine","ea","1.79",1],
  ["Yellow Onions","lb","0.79",1],["Hass Avocados","",  "5.00",3],["Watermelon","lb","0.39",1],
  ["Fresh Cilantro","bunch","0.69",1],["Limes","","1.00",5],["Russet Potatoes","lb","0.99",1],
+ ["Blueberries","pint","3.49",1],["Green Beans","lb","1.29",1],["Mangoes","","1.00",2],
+ ["Cucumbers","ea","0.59",1],["Peaches","lb","1.99",1],["Carrots","bunch","1.29",1],
+ ["Broccoli","ea","1.49",1],["Lemons","","1.00",4],["Zucchini","lb","0.99",1],
+ ["Pineapple","ea","2.50",1],["Jalapeños","lb","0.99",1],["Honeycrisp Apples","lb","1.79",1],
+ ["Spinach","bunch","1.49",1],["Garlic","","1.00",3],["Asparagus","lb","2.99",1],
 ];
 const ID_GFMT=[
  ["chalkboard A-frame","Casual","loose, all downstrokes — fast"],
@@ -1849,13 +1878,17 @@ const ID_GFMT=[
  ["window banner","Gothic","big, must read from the lot"],
  ["sale burst / star","Gothic","price in the burst, product above"],
  ["produce crate card","Casual","product name + price, quick"],
+ ["aisle dangler","Gothic","short + punchy, price huge"],
+ ["meat case card","Casual","cut name + price per lb"],
+ ["bin topper","Gothic","one word + price, read from above"],
+ ["kraft tag string","Casual","handwritten feel, fast brush"],
 ];
 const ID_GSTORE=[
  {names:["Santa Cruz","Buy-Rite","Sunland","Mercado Vega","Harbor"],emph:"MARKET",word:"Market",alpha:["Gothic","Egyptian"]},
  {names:["Golden State","Pacific","Eastside","Rancho"],emph:"GROCERY",word:"Grocery",alpha:["Gothic","Roman"]},
  {names:["Lim's","Patel","Olsen's"],emph:"FOODS",word:"Foods",alpha:["Gothic","Egyptian"]},
 ];
-const ID_GTAGS=["fresh daily","local produce","open 7 days","since 1962","carnicería","best prices","we deliver"];
+const ID_GTAGS=["fresh daily","local produce","open 7 days","since 1962","carnicería","best prices","we deliver","weekly specials","EBT welcome","abierto","grown in-state","while supplies last","picked today"];
 const ID_GGROUND_CARD=["white card + black + red price","chalkboard + white + yellow price","kraft + black"];
 const ID_GSIZE=['72"×30" fascia','48"×36" window','96"×24" awning band'];
 function priceStr(unit,price,qty){ return qty>1 ? qty+'/$'+price : '$'+price+' / '+unit; }
