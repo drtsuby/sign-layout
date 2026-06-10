@@ -2080,20 +2080,19 @@ calcMargins();calcRows();calcLetters();calcSlope();calcShadow();calcContrast();c
 /* ---- offline service worker (inline, cache the page) ---- */
 if('serviceWorker' in navigator){
   const swCode = `
-    const C='signco-v3';
+    const C='signco-v4';
     self.addEventListener('install',e=>{self.skipWaiting();});
-    self.addEventListener('activate',e=>{e.waitUntil(clients.claim());});
+    self.addEventListener('activate',e=>{e.waitUntil(
+      caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>clients.claim())
+    );});
+    /* network-first: always serve the latest when online, fall back to cache offline */
     self.addEventListener('fetch',e=>{
+      if(e.request.method!=='GET') return;
       e.respondWith(
-        caches.open(C).then(cache=>
-          cache.match(e.request).then(hit=>{
-            const net=fetch(e.request).then(res=>{
-              if(e.request.method==='GET'&&res.ok) cache.put(e.request,res.clone());
-              return res;
-            }).catch(()=>hit);
-            return hit||net;
-          })
-        )
+        fetch(e.request).then(res=>{
+          if(res&&res.ok){ const cl=res.clone(); caches.open(C).then(cache=>cache.put(e.request,cl)); }
+          return res;
+        }).catch(()=>caches.match(e.request))
       );
     });`;
   const blob=new Blob([swCode],{type:'text/javascript'});
