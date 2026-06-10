@@ -103,6 +103,7 @@
     font-size:12px;letter-spacing:.04em;cursor:pointer;transition:.15s;}
   .seg button.on{background:var(--gold);color:var(--board);font-weight:600;}
   .seg button + button{border-left:1px solid var(--rule);}
+  #idCat button{padding-left:3px;padding-right:3px;font-size:11px;letter-spacing:0;}
 
   .out{margin-top:16px;padding:14px;background:var(--board2);border-radius:5px;
     border-left:3px solid var(--gold);}
@@ -497,6 +498,7 @@
       <button data-c="grocery">Grocery</button>
       <button data-c="special">Specials</button>
       <button data-c="trade">Services</button>
+      <button data-c="event">Events</button>
     </div>
     <label>Brief</label>
     <div class="seg" id="idMode">
@@ -1943,6 +1945,29 @@ const ID_TRADE=[
 ];
 const ID_TRSURF=['truck door lettering','van panel','12"×18" yard sign','A-frame','8 ft banner','magnetic door sign','job-site sign'];
 const ID_TRGROUND=['white truck + blue + red','black + gold','green + white','red + white','navy + orange','white + maroon'];
+/* events — community banners & posters */
+const ID_EVENT=[
+ {msg:"COUNTY FAIR",emph:"COUNTY FAIR",sub:["Aug 12–16","rides • games • food","at the fairgrounds"],alpha:["Western","Gothic","Casual"]},
+ {msg:"FARMERS MARKET",emph:"FARMERS MARKET",sub:["Saturdays 8–1","fresh • local","on the square"],alpha:["Casual","Roman","Gothic"]},
+ {msg:"CAR SHOW",emph:"CAR SHOW",sub:["Sunday 10–3","classics • hot rods","free admission"],alpha:["Gothic","Western"]},
+ {msg:"MUSIC FESTIVAL",emph:"LIVE MUSIC",sub:["this weekend","3 stages","food trucks"],alpha:["Gothic","Casual"]},
+ {msg:"CRAFT FAIR",emph:"CRAFT FAIR",sub:["Nov 4 & 5","100 vendors","handmade goods"],alpha:["Script","Casual","Roman"]},
+ {msg:"CHURCH BAZAAR",emph:"BAZAAR",sub:["Sat 9–4","bake sale • crafts","all welcome"],alpha:["Roman","Old English","Casual"]},
+ {msg:"SCHOOL CARNIVAL",emph:"CARNIVAL",sub:["Friday 5–9","games • prizes","fun for all ages"],alpha:["Casual","Gothic","Western"]},
+ {msg:"RODEO",emph:"RODEO",sub:["this Saturday","8 PM","grandstand"],alpha:["Western","Gothic"]},
+ {msg:"PANCAKE BREAKFAST",emph:"PANCAKES",sub:["Sun 7–11","all you can eat","$8 a plate"],alpha:["Casual","Gothic"]},
+ {msg:"BLOCK PARTY",emph:"BLOCK PARTY",sub:["Saturday","music • food","Maple St."],alpha:["Casual","Gothic","Script"]},
+ {msg:"FLEA MARKET",emph:"FLEA MARKET",sub:["Sun 6–2","100+ sellers","free parking"],alpha:["Gothic","Western","Casual"]},
+ {msg:"FISH FRY",emph:"FISH FRY",sub:["Friday 5–8","$12 plate","VFW hall"],alpha:["Casual","Gothic"]},
+ {msg:"FUNDRAISER",emph:"FUNDRAISER",sub:["raffle • auction","help us reach our goal","this Saturday"],alpha:["Roman","Gothic","Casual"]},
+ {msg:"ART WALK",emph:"ART WALK",sub:["First Friday","6–9 PM","downtown"],alpha:["Roman","Script","Gothic"]},
+ {msg:"CHILI COOK-OFF",emph:"CHILI COOK-OFF",sub:["Sat noon","tasting $5","bragging rights"],alpha:["Western","Casual","Gothic"]},
+ {msg:"PARADE",emph:"PARADE",sub:["Main St.","10 AM","bring the kids"],alpha:["Gothic","Western","Roman"]},
+ {msg:"PUMPKIN FESTIVAL",emph:"PUMPKIN FEST",sub:["all October","hayrides • cider","family fun"],alpha:["Casual","Western"]},
+ {msg:"OPENING DAY",emph:"PLAY BALL",sub:["Saturday 9 AM","snack bar open","go team!"],alpha:["Gothic","Casual","Western"]},
+];
+const ID_EVSURF=['vinyl banner 8 ft','poster set','A-frame','yard-sign run','window banner','fence banner','sandwich board'];
+const ID_EVGROUND=['red + white + blue','black + yellow','green + white','navy + orange','maroon + gold','black + orange'];
 let idCat='storefront';
 /* ---- cheat mode: a quick SVG layout mockup of the rolled brief ---- */
 let idCheat=false;
@@ -1992,6 +2017,15 @@ function rollIdea(){
     const head=`<div class="biz">${name} &mdash; <span class="emph">${tr.emph}</span></div>`;
     if(idMode==='simple'){ card.innerHTML=head+mockOut(lines,ground,alpha); return; }
     const det=[['Emphasis',tr.emph],['Services',svc],['Format',idPick(ID_TRSURF)],['Alphabet',alpha],['Phone','put the number BIG'],['Colors',ground]];
+    card.innerHTML=head+detHTML(det)+mockOut(lines,ground,alpha); return;
+  }
+  if(idCat==='event'){
+    const ev=idPick(ID_EVENT), sub=idPick(ev.sub);
+    const alpha=idPick(ev.alpha), ground=idPick(ID_EVGROUND);
+    const lines = ev.msg!==ev.emph ? [{t:ev.msg,role:'name'},{t:ev.emph,role:'emph'},{t:sub,role:'tag'}] : [{t:ev.emph,role:'emph'},{t:sub,role:'tag'}];
+    const head=`<div class="biz">${ev.msg} &mdash; <span class="emph">${sub}</span></div>`;
+    if(idMode==='simple'){ card.innerHTML=head+mockOut(lines,ground,alpha); return; }
+    const det=[['Headline',ev.msg],['Emphasis',ev.emph],['Detail',sub],['Surface',idPick(ID_EVSURF)],['Alphabet',alpha],['Colors',ground]];
     card.innerHTML=head+detHTML(det)+mockOut(lines,ground,alpha); return;
   }
   if(idCat==='special'){
