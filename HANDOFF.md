@@ -82,7 +82,9 @@ loaded from the `fonts/` folder (see Font workflow below).
 
 **Sketch** — copy-block layout sketcher with rule checks (emphasis, size variation,
 movement, phrase count, margin, **negative space** — perimeter margin must beat the
-gaps between copy blocks, per John King's message-block hierarchy).
+gaps between copy blocks, per John King's message-block hierarchy) and a visual
+**balance meter** — a seesaw (Bond's lever) that tips toward the heavier half:
+balanced / grounded / top-heavy, from the centre of visual weight (size² point-mass).
 
 **Ideas** — practice-prompt generator. Storefront/Grocery toggle, Simple/Detailed.
 
