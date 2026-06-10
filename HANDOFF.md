@@ -128,7 +128,7 @@ gilding checklist (Matthews), safety.
 
 ## Deploy workflow (automated)
 
-Repo is cloned locally at `C:/Users/cad/Documents/GitHub/sign-layout/`.
+Repo is cloned locally at `C:/Users/User/Documents/GitHub/sign-layout/`.
 Edit `index.html` → Claude commits + pushes → GitHub Pages auto-deploys in ~1 min.
 Git credentials work via Windows Credential Manager on that machine.
 
