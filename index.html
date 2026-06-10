@@ -666,6 +666,52 @@
   </div>
 
   <div class="card">
+    <h2>Letter Spacing &mdash; Optical <span class="badge">John King</span></h2>
+    <p class="sub">The modern eye-first method: equalize the <i>negative-space area</i> between letters, not the measured gap. There's no formula &mdash; trust the eye.</p>
+    <div class="det-body">
+      <p class="trait">Spacing by the eye</p>
+      <ul>
+        <li><b>Never space mechanically.</b> Equal measured gaps between straight edges look uneven; balance the <i>area</i> of space instead.</li>
+        <li><b>Compensate for shape.</b> Round (O C G) and open letters carry extra apparent space &mdash; tuck them closer. Straight-sided neighbours (M N H I L) set the baseline gap; gauge the rest to match.</li>
+        <li><b>The A/V/W gauge:</b> set an A, V or W <i>almost touching</i> an adjacent straight-edged letter, then gauge all other spacing to that.</li>
+        <li><b>Problem combos</b> (L&ndash;T, L&ndash;Y): the L's foot leaves a big empty pocket &mdash; cheeky but permissible to shave a little off the right of the L to soften it.</li>
+        <li><b>Tight = handcrafted, loose = computer-like.</b> Working digitally, tighten by hand to kill the computerized look.</li>
+      </ul>
+      <p class="trait" style="margin-top:10px">Double spacing</p>
+      <ul>
+        <li>Deliberately wide spacing extends a short word or secondary line <i>without</i> enlarging or stretching the letters &mdash; and reads as a design element. Drop dots/diamonds between letters: W&nbsp;&middot;&nbsp;E&nbsp;&middot;&nbsp;L&nbsp;&middot;&nbsp;C&nbsp;&middot;&nbsp;O&nbsp;&middot;&nbsp;M&nbsp;&middot;&nbsp;E.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Layout &amp; Lettering <span class="badge">Bond 1937</span></h2>
+    <p class="sub">Showcard design rests on four principles &mdash; <b>symmetry, balance, proportion, spacing</b> &mdash; that together make "completeness."</p>
+    <div class="det-body">
+      <p class="trait">Building the layout</p>
+      <ul>
+        <li><b>Four elements:</b> display lines &middot; body lettering &middot; ornament/illustration &middot; borders &amp; margins.</li>
+        <li><b>Find the "high light."</b> Read the copy, pick the one selling point, emphasise only it. Don't emphasise the obvious (no need to enlarge "Shirts" in a shirt window) &mdash; lead with the real news: "New Season's Designs&hellip;" beats "Shirts&hellip;".</li>
+        <li><b>Avoid confusion.</b> Too many display lines = disorder. Aim for one punchy headline (+ price) and a subordinate sub-head; contrast carries the read.</li>
+        <li><b>"Spot" it first</b> &mdash; settle the design with rough miniature thumbnail sketches before committing to the card.</li>
+      </ul>
+      <p class="trait" style="margin-top:10px">Balance &amp; proportion</p>
+      <ul>
+        <li><b>Balance</b> &mdash; obvious/symmetrical (two halves mirror) vs occult/"felt" (asymmetrical but balanced). Models: the <b>pyramid</b> (broad base &rarr; point) and the <b>lever</b> (4&nbsp;lb at 1 balances 1&nbsp;lb at 4 &mdash; visual weight &times; distance from centre). Sense it, don't measure.</li>
+        <li><b>Proportion</b> &mdash; pleasing card ratios 3:5 and 3:8 ("Golden Measure"); avoid mechanical exact 2&times;/3&times;; width about &frac12;&ndash;&frac23; of the length. The copy-mass should echo the card shape; rectangles read better than squares.</li>
+        <li><b>Subordination</b> &mdash; a graded hierarchy; no two elements equal in value/colour/strength or they fight. <b>Repose</b> &mdash; quiet, dignified harmony from the right proportion of each part.</li>
+      </ul>
+      <p class="trait" style="margin-top:10px">Lettering</p>
+      <ul>
+        <li><b>Caps vs lower case:</b> caps for headings/emphasis only; body in lower case. Over-using caps = confusion and harder reading &mdash; the fewer words in caps, the more they stand out.</li>
+        <li><b>Style fits the subject:</b> "Dainty Lingerie" delicate &middot; "Iron Piping" bold &middot; "Modern Furniture" modern &middot; "Antiques" Old English. White highlights make "Iced Soda" icy; haze lines make "Hot" hot.</li>
+        <li><b>Headlines</b> are the boldest part &mdash; the card lives or dies on the headline. For punch they can stagger: letters at angles, uneven heights, falling/overlapping &mdash; but keep a pleasing look.</li>
+        <li><b>Script</b> gives a heading "kick" and dignity; <b>Old English</b> suits Christmas and religious work only.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Shading <span class="badge">ICS 1902</span></h2>
     <p class="sub">Light assumed at 45°. Shade widest <i>midway</i> along a stroke, tapering to nothing at the ends &mdash; the common error is too much thickness where it starts/finishes.</p>
     <div class="det-body">
@@ -1417,11 +1463,11 @@ function drawSketch(){
     cursorY+=bh+gap;
   });
   svg.innerHTML=s;
-  runChecks(W,H,small*mp);
+  runChecks(W,H,small*mp,gap/sc);
 }
 function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function runChecks(W,H,extMargin){
+function runChecks(W,H,extMargin,blockGap){
   const c=document.getElementById('skChecks');
   const out=[];
   // emphasis present? need a clear biggest
@@ -1445,6 +1491,10 @@ function runChecks(W,H,extMargin){
   const okMargin=extMargin>=0.4;
   out.push([okMargin,'Exterior margin',
     okMargin? dec(extMargin)+' margin — leaves breathing room.':'Margin is tight. On a skinny sign, eyeball with a yardstick instead of the %.']);
+  // negative-space hierarchy (John King): perimeter margin should beat the gaps between blocks
+  const nsOk = blocks.length<2 || extMargin >= blockGap*0.9;
+  out.push([nsOk,'Negative space',
+    nsOk?'Border space beats the gaps between blocks — copy reads as one message.':'Gaps between blocks rival the border ('+dec(blockGap)+' vs '+dec(extMargin)+' margin) — copy can split into separate messages. Widen the margin or add phrases to tighten the stack.']);
 
   c.innerHTML=out.map(([ok,title,msg])=>
     `<div class="chk ${ok?'ok':'warn'}"><span class="ico">${ok?'\u2713':'!'}</span><span><b>${title}.</b> ${msg}</span></div>`
