@@ -503,6 +503,9 @@
       <button data-m="simple" class="on">Simple</button>
       <button data-m="detailed">Detailed</button>
     </div>
+    <label style="display:flex;align-items:center;gap:9px;margin-top:12px;cursor:pointer;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em;font-size:12px;color:var(--muted)">
+      <input type="checkbox" id="idCheat" style="accent-color:var(--gold);width:16px;height:16px;flex:none"> Cheat mode &mdash; show a layout mockup
+    </label>
     <div id="idCard" class="idcard"></div>
     <button id="idRoll" class="addbtn" style="border-style:solid;color:var(--board);background:var(--gold)">↻ Roll a new prompt</button>
     <div class="note">A detailed brief sets up a full layout exercise &mdash; punch the size into the Sketch tab and the alphabet into Letters to work it out.</div>
@@ -1941,60 +1944,94 @@ const ID_TRADE=[
 const ID_TRSURF=['truck door lettering','van panel','12"×18" yard sign','A-frame','8 ft banner','magnetic door sign','job-site sign'];
 const ID_TRGROUND=['white truck + blue + red','black + gold','green + white','red + white','navy + orange','white + maroon'];
 let idCat='storefront';
+/* ---- cheat mode: a quick SVG layout mockup of the rolled brief ---- */
+let idCheat=false;
+const ALPHA_FONT={
+ Gothic:["'Oswald',sans-serif",600,0],Block:["'Oswald',sans-serif",700,0],"Half Block":["'Oswald',sans-serif",600,0],
+ Phoenix:["'Oswald',sans-serif",500,0],Western:["'Oswald',sans-serif",700,0],
+ Roman:["'Playfair Display',serif",700,0],"Thick & Thin":["'Playfair Display',serif",700,0],"Old English":["'Playfair Display',serif",700,0],
+ Egyptian:["'Bitter',serif",600,0],Casual:["'Bitter',serif",600,1],Script:["'Bitter',serif",500,1]
+};
+const MOCK_COLORS=[['dark green','#1d3a2a'],['dark ground','#16221f'],['soaped glass','#cdd8d2'],['chalkboard','#222d27'],['fluorescent','#c6e600'],['cream','#efe6cf'],['buff','#d8c79a'],['kraft','#b58b54'],['tempera','#f4ece0'],['white','#f4ece0'],['black','#1a1a1a'],['gold','#d6a93b'],['maroon','#6e1f2a'],['navy','#1c2a4a'],['green','#2f6b3f'],['red','#b3331f'],['yellow','#e8c537'],['blue','#2b4f9e'],['orange','#d2691e'],['silver','#cfd4d6'],['dark','#16221f']];
+function lum(h){const n=parseInt(h.slice(1),16);return 0.299*(n>>16&255)/255+0.587*(n>>8&255)/255+0.114*(n&255)/255;}
+function parseGround(g){
+ g=(g||'').toLowerCase();const f=[];
+ g.split('+').forEach(pc=>{for(const cw of MOCK_COLORS){if(pc.indexOf(cw[0])>-1){f.push(cw[1]);break;}}});
+ let bg=f[0]||'#16221f',ink=f[1]||(lum(f[0]||'#16221f')>0.5?'#1a1a1a':'#f4ece0'),accent=f[2]||ink;
+ if(Math.abs(lum(bg)-lum(ink))<0.25) ink=lum(bg)>0.5?'#1a1a1a':'#f4ece0';
+ if(Math.abs(lum(bg)-lum(accent))<0.22) accent=ink;
+ return {bg:bg,ink:ink,accent:accent};
+}
+function renderMock(lines,ground,alpha){
+ const W=320,H=200,pad=W*0.09;
+ const c=parseGround(ground), af=ALPHA_FONT[alpha]||ALPHA_FONT.Gothic;
+ const iw=W-pad*2,ih=H-pad*2, rw={emph:1,name:0.62,tag:0.4};
+ const tot=lines.reduce((a,l)=>a+rw[l.role],0)||1;
+ const gap=ih*0.07,avail=ih-gap*(lines.length-1);
+ const cwf=af[0].indexOf('Oswald')>-1?1.7:1.45;
+ let y=pad,body='';
+ lines.forEach(l=>{
+   const slot=avail*(rw[l.role]/tot),cy=y+slot/2;
+   const fs=Math.max(9,Math.min(slot*0.86, iw/Math.max(l.t.length,1)*cwf));
+   const col=l.role==='emph'?c.accent:c.ink;
+   const wt=l.role==='emph'?af[1]:(l.role==='name'?Math.max(af[1],600):500);
+   body+=`<text x="${W/2}" y="${cy}" fill="${col}" font-family="${af[0]}" font-weight="${wt}" font-style="${af[2]?'italic':'normal'}" font-size="${fs}" text-anchor="middle" dominant-baseline="middle" letter-spacing="${l.role==='tag'?0:0.5}">${esc(l.t)}</text>`;
+   y+=slot+gap;
+ });
+ return `<svg viewBox="0 0 ${W} ${H}" aria-label="layout mockup"><rect x="2" y="2" width="${W-4}" height="${H-4}" rx="7" fill="${c.bg}" stroke="${c.accent}" stroke-width="3"/><rect x="${pad*0.6}" y="${pad*0.6}" width="${W-pad*1.2}" height="${H-pad*1.2}" rx="3" fill="none" stroke="${c.ink}" stroke-width="0.7" opacity="0.3"/>${body}</svg>`;
+}
+function detHTML(det){return `<div class="det">`+det.map(([k,v])=>`<div class="drow"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')+`</div>`;}
+function mockOut(lines,ground,alpha){return idCheat?renderMock(lines,ground,alpha):'';}
+
 function rollIdea(){
   const card=document.getElementById('idCard');
   if(idCat==='trade'){
     const tr=idPick(ID_TRADE), name=idPick(tr.names), svc=idPick(tr.sub);
-    if(idMode==='simple'){ card.innerHTML=`<div class="biz">${name} &mdash; <span class="emph">${tr.emph}</span></div>`; return; }
-    const det=[['Emphasis',tr.emph],['Services',svc],['Format',idPick(ID_TRSURF)],['Alphabet',idPick(tr.alpha)],['Phone','put the number BIG'],['Colors',idPick(ID_TRGROUND)]];
-    card.innerHTML=`<div class="biz">${name} &mdash; <span class="emph">${tr.emph}</span></div><div class="det">`+
-      det.map(([k,v])=>`<div class="drow"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')+`</div>`;
-    return;
+    const alpha=idPick(tr.alpha), ground=idPick(ID_TRGROUND);
+    const lines=[{t:tr.emph,role:'emph'},{t:name,role:'name'},{t:svc,role:'tag'}];
+    const head=`<div class="biz">${name} &mdash; <span class="emph">${tr.emph}</span></div>`;
+    if(idMode==='simple'){ card.innerHTML=head+mockOut(lines,ground,alpha); return; }
+    const det=[['Emphasis',tr.emph],['Services',svc],['Format',idPick(ID_TRSURF)],['Alphabet',alpha],['Phone','put the number BIG'],['Colors',ground]];
+    card.innerHTML=head+detHTML(det)+mockOut(lines,ground,alpha); return;
   }
   if(idCat==='special'){
     const sp=idPick(ID_SPECIAL), sub=idPick(sp.sub);
-    if(idMode==='simple'){ card.innerHTML=`<div class="biz">${sp.msg} &mdash; <span class="emph">${sub}</span></div>`; return; }
-    const det=[['Headline',sp.msg],['Emphasis',sp.emph],['Sub-line',sub],['Surface',idPick(ID_SPSURF)],['Alphabet',idPick(sp.alpha)],['Colors',idPick(ID_SPGROUND)]];
-    card.innerHTML=`<div class="biz">${sp.msg} &mdash; <span class="emph">${sub}</span></div><div class="det">`+
-      det.map(([k,v])=>`<div class="drow"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')+`</div>`;
-    return;
+    const alpha=idPick(sp.alpha), ground=idPick(ID_SPGROUND);
+    const lines = sp.msg!==sp.emph ? [{t:sp.msg,role:'name'},{t:sp.emph,role:'emph'},{t:sub,role:'tag'}] : [{t:sp.emph,role:'emph'},{t:sub,role:'tag'}];
+    const head=`<div class="biz">${sp.msg} &mdash; <span class="emph">${sub}</span></div>`;
+    if(idMode==='simple'){ card.innerHTML=head+mockOut(lines,ground,alpha); return; }
+    const det=[['Headline',sp.msg],['Emphasis',sp.emph],['Sub-line',sub],['Surface',idPick(ID_SPSURF)],['Alphabet',alpha],['Colors',ground]];
+    card.innerHTML=head+detHTML(det)+mockOut(lines,ground,alpha); return;
   }
   if(idCat==='grocery'){
-    const isCardKind=Math.random()<0.6;
-    if(isCardKind){
+    if(Math.random()<0.6){
       const [p,unit,price,qty]=idPick(ID_PRODUCE), ps=priceStr(unit,price,qty);
-      if(idMode==='simple'){ card.innerHTML=`<div class="biz">${p} &mdash; <span class="emph">${ps}</span></div>`; return; }
-      const [fmt,alpha,fnote]=idPick(ID_GFMT);
-      const det=[['Headline',p],['Price',ps],['Format',fmt],['Alphabet',alpha+' — '+fnote],['Emphasis','the PRICE'],['Ground',idPick(ID_GGROUND_CARD)]];
-      card.innerHTML=`<div class="biz">${p} &mdash; <span class="emph">${ps}</span></div><div class="det">`+
-        det.map(([k,v])=>`<div class="drow"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')+`</div>`;
+      const [fmt,alpha,fnote]=idPick(ID_GFMT), ground=idPick(ID_GGROUND_CARD);
+      const lines=[{t:p,role:'name'},{t:ps,role:'emph'}];
+      const head=`<div class="biz">${p} &mdash; <span class="emph">${ps}</span></div>`;
+      if(idMode==='simple'){ card.innerHTML=head+mockOut(lines,ground,alpha); return; }
+      const det=[['Headline',p],['Price',ps],['Format',fmt],['Alphabet',alpha+' — '+fnote],['Emphasis','the PRICE'],['Ground',ground]];
+      card.innerHTML=head+detHTML(det)+mockOut(lines,ground,alpha); return;
     } else {
       const s=idPick(ID_GSTORE), name=idPick(s.names);
-      if(idMode==='simple'){ card.innerHTML=`<div class="biz">${name} &mdash; <span class="emph">${s.word}</span></div>`; return; }
-      const det=[['Emphasis',s.emph],['Sign size',idPick(ID_GSIZE)],['Alphabet',idPick(s.alpha)],['Tagline',idPick(ID_GTAGS)],['Panel',idPick(["background panel","banner","notched corners"])],['Colors',idPick(["red + white","green + cream","black + gold","navy + white"])]];
-      card.innerHTML=`<div class="biz">${name} &mdash; <span class="emph">${s.word}</span></div><div class="det">`+
-        det.map(([k,v])=>`<div class="drow"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')+`</div>`;
+      const alpha=idPick(s.alpha), tag=idPick(ID_GTAGS), ground=idPick(["red + white","green + cream","black + gold","navy + white"]);
+      const lines=[{t:name,role:'emph'},{t:s.word,role:'name'},{t:tag,role:'tag'}];
+      const head=`<div class="biz">${name} &mdash; <span class="emph">${s.word}</span></div>`;
+      if(idMode==='simple'){ card.innerHTML=head+mockOut(lines,ground,alpha); return; }
+      const det=[['Emphasis',s.emph],['Sign size',idPick(ID_GSIZE)],['Alphabet',alpha],['Tagline',tag],['Panel',idPick(["background panel","banner","notched corners"])],['Colors',ground]];
+      card.innerHTML=head+detHTML(det)+mockOut(lines,ground,alpha); return;
     }
-    return;
   }
   const b=idPick(ID_BIZ), name=idPick(b.names);
-  if(idMode==='simple'){
-    card.innerHTML=`<div class="biz">${name} &mdash; <span class="emph">${b.t}</span></div>`;
-    return;
-  }
   const sz=idPick(ID_SIZES);
   let alpha=idPick(b.alpha);
   if(sz.h/sz.w>=2 && b.alpha.includes("Phoenix")) alpha="Phoenix";
-  const det=[
-    ['Emphasis', b.emph],
-    ['Sign size', sz.w+'" × '+sz.h+'" — '+sz.n],
-    ['Alphabet', alpha],
-    ['Tagline', idPick(ID_TAGS)],
-    ['Panel', idPick(ID_PANELS)],
-    ['Colors', idPick(ID_GROUND[b.tier])],
-  ];
-  card.innerHTML=`<div class="biz">${name} &mdash; <span class="emph">${b.t}</span></div>
-    <div class="det">`+det.map(([k,v])=>`<div class="drow"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')+`</div>`;
+  const ground=idPick(ID_GROUND[b.tier]), tag=idPick(ID_TAGS);
+  const lines=[{t:name,role:'emph'},{t:b.emph,role:'name'},{t:tag,role:'tag'}];
+  const head=`<div class="biz">${name} &mdash; <span class="emph">${b.t}</span></div>`;
+  if(idMode==='simple'){ card.innerHTML=head+mockOut(lines,ground,alpha); return; }
+  const det=[['Emphasis',b.emph],['Sign size',sz.w+'" × '+sz.h+'" — '+sz.n],['Alphabet',alpha],['Tagline',tag],['Panel',idPick(ID_PANELS)],['Colors',ground]];
+  card.innerHTML=head+detHTML(det)+mockOut(lines,ground,alpha);
 }
 document.getElementById('idMode').addEventListener('click',e=>{
   if(e.target.tagName!=='BUTTON')return;
@@ -2006,6 +2043,7 @@ document.getElementById('idCat').addEventListener('click',e=>{
   [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));
   idCat=e.target.dataset.c; rollIdea();
 });
+document.getElementById('idCheat').addEventListener('change',e=>{ idCheat=e.target.checked; rollIdea(); });
 document.getElementById('idRoll').addEventListener('click',rollIdea);
 rollIdea();
 

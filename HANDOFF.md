@@ -88,7 +88,10 @@ balanced / grounded / top-heavy, from the centre of visual weight (size² point-
 
 **Ideas** — practice-prompt generator. Storefront / Grocery / Specials (window-splash
 & promo) / Services (trades — truck lettering, yard signs) toggle, Simple/Detailed.
-Data-driven (ID_BIZ, ID_PRODUCE, ID_SPECIAL, ID_TRADE, etc.).
+Data-driven (ID_BIZ, ID_PRODUCE, ID_SPECIAL, ID_TRADE, etc.). **Cheat mode** checkbox
+draws an SVG layout mockup of the rolled brief (for beginners) — `renderMock()` maps
+the alphabet to a loaded font (Oswald/Playfair/Bitter), parses the colour combo into
+ground/ink/accent (with a value-contrast guard), and stacks the copy by emphasis.
 
 **Shadow** — type characters, pick shade type (drop/cast/relief/block/beveled) +
 direction -> offset/angle/depth numbers + diagram.
