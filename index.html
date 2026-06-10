@@ -495,6 +495,7 @@
     <div class="seg" id="idCat">
       <button data-c="storefront" class="on">Storefront</button>
       <button data-c="grocery">Grocery</button>
+      <button data-c="special">Specials</button>
     </div>
     <label>Brief</label>
     <div class="seg" id="idMode">
@@ -1892,9 +1893,40 @@ const ID_GTAGS=["fresh daily","local produce","open 7 days","since 1962","carnic
 const ID_GGROUND_CARD=["white card + black + red price","chalkboard + white + yellow price","kraft + black"];
 const ID_GSIZE=['72"×30" fascia','48"×36" window','96"×24" awning band'];
 function priceStr(unit,price,qty){ return qty>1 ? qty+'/$'+price : '$'+price+' / '+unit; }
+/* specials — window splashes & promo / roadside signs */
+const ID_SPECIAL=[
+ {msg:"GRAND OPENING",emph:"GRAND OPENING",sub:["this weekend","now open","come see us"],alpha:["Gothic","Casual","Script"]},
+ {msg:"SALE",emph:"50% OFF",sub:["storewide","today only","everything"],alpha:["Gothic","Casual"]},
+ {msg:"NOW HIRING",emph:"HIRING",sub:["apply within","all positions","ask inside"],alpha:["Gothic","Egyptian"]},
+ {msg:"CLEARANCE",emph:"CLEARANCE",sub:["everything must go","final markdown","while it lasts"],alpha:["Gothic","Casual"]},
+ {msg:"GOING OUT OF BUSINESS",emph:"EVERYTHING MUST GO",sub:["up to 70% off","final days","nothing held back"],alpha:["Gothic","Casual"]},
+ {msg:"UNDER NEW MANAGEMENT",emph:"NEW MANAGEMENT",sub:["come see what's new","same great service"],alpha:["Gothic","Roman"]},
+ {msg:"COMING SOON",emph:"COMING SOON",sub:["watch this space","opening this fall","stay tuned"],alpha:["Gothic","Roman","Script"]},
+ {msg:"SIDEWALK SALE",emph:"SIDEWALK SALE",sub:["this Saturday","rain or shine","out front"],alpha:["Casual","Gothic"]},
+ {msg:"WE'RE OPEN",emph:"OPEN",sub:["come on in","walk-ins welcome","open late"],alpha:["Gothic","Casual","Script"]},
+ {msg:"BUY ONE GET ONE",emph:"BOGO",sub:["free","half off","this week"],alpha:["Gothic","Casual"]},
+ {msg:"CASH FOR GOLD",emph:"CASH FOR GOLD",sub:["top dollar","gold & silver","paid today"],alpha:["Gothic","Roman"]},
+ {msg:"CAR WASH",emph:"CAR WASH",sub:["$5 today","this Saturday","fundraiser"],alpha:["Casual","Gothic"]},
+ {msg:"YARD SALE",emph:"YARD SALE",sub:["Sat & Sun 8–2","everything goes","follow the arrows"],alpha:["Casual"]},
+ {msg:"FRESH EGGS",emph:"FRESH EGGS",sub:["$5 a dozen","farm fresh","honey too"],alpha:["Casual","Script"]},
+ {msg:"PUMPKINS",emph:"PUMPKINS",sub:["pick your own","hayrides","corn maze"],alpha:["Casual","Western"]},
+ {msg:"CHRISTMAS TREES",emph:"TREES",sub:["fresh cut","you-cut","wreaths too"],alpha:["Roman","Script","Casual"]},
+ {msg:"COLD BEER",emph:"COLD BEER",sub:["ice","bait","open late"],alpha:["Gothic","Casual"]},
+ {msg:"OPEN HOUSE",emph:"OPEN HOUSE",sub:["Sun 1–4","come tour","priced to sell"],alpha:["Roman","Gothic"]},
+];
+const ID_SPSURF=['window splash (glass)','A-frame chalkboard','12"×24" yard sign','6 ft banner','poster show card','sandwich board','tagboard card'];
+const ID_SPGROUND=['white + red price','yellow + black','red + white + blue','fluorescent + black','soaped glass + tempera','black + gold','white + maroon'];
 let idCat='storefront';
 function rollIdea(){
   const card=document.getElementById('idCard');
+  if(idCat==='special'){
+    const sp=idPick(ID_SPECIAL), sub=idPick(sp.sub);
+    if(idMode==='simple'){ card.innerHTML=`<div class="biz">${sp.msg} &mdash; <span class="emph">${sub}</span></div>`; return; }
+    const det=[['Headline',sp.msg],['Emphasis',sp.emph],['Sub-line',sub],['Surface',idPick(ID_SPSURF)],['Alphabet',idPick(sp.alpha)],['Colors',idPick(ID_SPGROUND)]];
+    card.innerHTML=`<div class="biz">${sp.msg} &mdash; <span class="emph">${sub}</span></div><div class="det">`+
+      det.map(([k,v])=>`<div class="drow"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')+`</div>`;
+    return;
+  }
   if(idCat==='grocery'){
     const isCardKind=Math.random()<0.6;
     if(isCardKind){

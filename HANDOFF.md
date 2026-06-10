@@ -86,7 +86,8 @@ gaps between copy blocks, per John King's message-block hierarchy) and a visual
 **balance meter** — a seesaw (Bond's lever) that tips toward the heavier half:
 balanced / grounded / top-heavy, from the centre of visual weight (size² point-mass).
 
-**Ideas** — practice-prompt generator. Storefront/Grocery toggle, Simple/Detailed.
+**Ideas** — practice-prompt generator. Storefront / Grocery / Specials (window-splash
+& promo) toggle, Simple/Detailed. Data-driven (ID_BIZ, ID_PRODUCE, ID_SPECIAL, etc.).
 
 **Shadow** — type characters, pick shade type (drop/cast/relief/block/beveled) +
 direction -> offset/angle/depth numbers + diagram.
