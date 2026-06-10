@@ -10,8 +10,13 @@ offline-capable, installable to a home screen.
 no external dependencies except Google Fonts. Icon, manifest, and offline service
 worker are embedded in the file.
 
-_Last updated: added Pen-Written Roman reference card (Gage 1924); confirmed Fonts
-tab already fully built; Kynaston lowercase/italic and additional books still open._
+_Last updated: added two Reference cards — "Letter Spacing — Optical" (John King)
+and "Layout & Lettering" (Bond 1937) — plus a "Negative space" Sketcher check
+(John King's message-block hierarchy). Source library found on the **W: drive**
+(`W:/Sign_Painting/Sign painting books`, `/PDF`, `/Charts`). Kynaston
+lowercase/italic is RESOLVED — the booklet has no numeric lowercase/italic table
+(lowercase is derived by eye from the caps), so nothing to add. Additional books
+still open._
 
 ---
 
@@ -76,7 +81,8 @@ loaded from the `fonts/` folder (see Font workflow below).
 -> top lean, lean-per-inch, rise:run, slant-line diagram.
 
 **Sketch** — copy-block layout sketcher with rule checks (emphasis, size variation,
-movement, phrase count, margin).
+movement, phrase count, margin, **negative space** — perimeter margin must beat the
+gaps between copy blocks, per John King's message-block hierarchy).
 
 **Ideas** — practice-prompt generator. Storefront/Grocery toggle, Simple/Detailed.
 
@@ -95,8 +101,12 @@ measurement converter.
 
 **Tools > Reference** — emphasis hierarchy, six alphabets, optical rules, ICS 1902
 spacing card, ICS 1902 shading card, Casual & Slope card (Gage 1924), Roman
-Construction card (Kynaston/DK 2024), **Pen-Written Roman card (Gage 1924)** —
-nib pen thick/thin rules, proportions, per-letter notes.
+Construction card (Kynaston/DK 2024), Pen-Written Roman card (Gage 1924) —
+nib pen thick/thin rules, proportions, per-letter notes — **Letter Spacing —
+Optical card (John King)** — eye-first spacing, A/V/W gauge, double spacing —
+**Layout & Lettering card (Bond 1937)** — 4 principles, high-light rule, balance
+(pyramid/lever, obvious vs occult), proportion (Golden Measure), caps vs lower
+case, character lettering.
 
 **Tools > Kit** — brush series numbers, paint/thinner, brush care, transfer methods,
 gilding checklist (Matthews), safety.
@@ -118,10 +128,18 @@ gilding checklist (Matthews), safety.
   (identifier: wagner-blue-print-text-book-1946). More to mine: visual alphabet plates
   (image-only, need photos/scans).
 - **Kynaston, Little Booklet of Roman Lettering (2024)** — DK Roman 10-point
-  construction chart. More to mine: lowercase/italic Roman, stretching/condensing.
-  **Need source pages shared to add this.**
-- **Additional books on user's NAS** — to be uploaded in a future session. Drop PDFs
-  directly into chat or copy to a local path for Claude to read.
+  construction chart (in the app). Fully mined: the booklet has NO numeric
+  lowercase/italic table — lowercase is derived by eye from the caps. Done.
+- **John King, Quick Letter Spacing & Quick Layout lessons (LetterArt Academy)** —
+  optical spacing (A/V/W gauge, double spacing) + negative-space "message-block"
+  layout hierarchy. → Spacing card + Layout card + Sketcher negative-space check.
+- **Bond, Showcard Lay-out and Design (1937)** — Ch. II Lettering + Ch. III Design
+  & Lay-out: 4 principles, high-light rule, balance, proportion, subordination,
+  repose, caps-vs-lower-case, character lettering. Still to mine: Ch. VI panel
+  lay-outs, Ch. XII trade phrase lists (→ Ideas tab).
+- **Source library on the W: drive** — `W:/Sign_Painting/` (`Sign painting books/`,
+  `PDF/`, `Charts/`). Dozens of vintage titles (Speedball, French, Idarius, etc.).
+  PDFs are image scans: render with PyMuPDF (`fitz`) → read PNGs.
 - **Class Gothic chart photo** (Jurakart/Olson) — exact per-letter stems, in the app.
 
 ---
@@ -180,9 +198,17 @@ ink metrics in a live browser DOM.
   sandboxed previews).
 - **More from ICS (1902)** — ~380pp, much unmined.
 - **More from Gage** — visual alphabet plates (image-only in the PDF; need photos).
-- **Kynaston lowercase/italic Roman** — need source pages from the booklet.
-- **Additional books from NAS** — user has more lettering books to contribute;
-  drop PDFs in chat or copy to local path.
+- ~~Kynaston lowercase/italic Roman~~ — RESOLVED: booklet has no numeric
+  lowercase/italic table; lowercase is derived by eye from the caps. Nothing to add.
+- **W: drive source library** — large collection at `W:/Sign_Painting/`
+  (`Sign painting books/`, `PDF/`, `Charts/`). Mineable next: Speedball Textbooks
+  (pen-width proportions, incl. lowercase + numerals), French *Essentials of
+  Lettering* 1912, Bond Ch. XII trade phrase lists (→ Ideas tab) and Ch. VI panel
+  lay-outs. PDFs are image scans (no text layer) — render with PyMuPDF (`fitz`),
+  then read the PNGs; `pdftoppm`/Playwright are NOT installed on this machine,
+  but Chrome headless works for app screenshots.
+- **Additional books** — drop PDFs in chat or copy to a local path (or point at
+  the W: drive).
 
 ---
 
