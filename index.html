@@ -496,6 +496,7 @@
       <button data-c="storefront" class="on">Storefront</button>
       <button data-c="grocery">Grocery</button>
       <button data-c="special">Specials</button>
+      <button data-c="trade">Services</button>
     </div>
     <label>Brief</label>
     <div class="seg" id="idMode">
@@ -1916,9 +1917,40 @@ const ID_SPECIAL=[
 ];
 const ID_SPSURF=['window splash (glass)','A-frame chalkboard','12"×24" yard sign','6 ft banner','poster show card','sandwich board','tagboard card'];
 const ID_SPGROUND=['white + red price','yellow + black','red + white + blue','fluorescent + black','soaped glass + tempera','black + gold','white + maroon'];
+/* services / trades — truck-door lettering, yard signs, A-frames */
+const ID_TRADE=[
+ {t:"Plumbing",names:["Roto-King","Vega & Sons","BlueLine"],emph:"PLUMBING",sub:["24-hr service","drains • repairs","licensed & insured"],alpha:["Gothic","Egyptian"]},
+ {t:"Electrician",names:["Voltz","Sparks","Mateo Electric"],emph:"ELECTRIC",sub:["residential • commercial","panel upgrades","free estimates"],alpha:["Gothic","Phoenix"]},
+ {t:"Roofing",names:["Summit","IronClad","Delgado"],emph:"ROOFING",sub:["free inspection","shingle • metal • flat","insured"],alpha:["Gothic","Egyptian"]},
+ {t:"Landscaping",names:["GreenGuard","Cutter's","Sol y Verde"],emph:"LANDSCAPING",sub:["mowing • cleanup","design • install","weekly service"],alpha:["Casual","Gothic"]},
+ {t:"House painting",names:["Brushworks","TrueCoat","Aceves"],emph:"PAINTING",sub:["interior • exterior","free quotes","30 yrs experience"],alpha:["Gothic","Roman","Casual"]},
+ {t:"Heating & air",names:["Polar","AirPro","Hidalgo"],emph:"HEATING & AIR",sub:["service • install","24-hr repair","financing avail."],alpha:["Gothic","Egyptian"]},
+ {t:"Towing",names:["Hook'em","Route 9","Big Rig"],emph:"TOWING",sub:["24 hr","jump • lockout • tow","flatbed"],alpha:["Gothic","Phoenix","Western"]},
+ {t:"Tree service",names:["Timberline","Oakridge","Cruz Tree"],emph:"TREE SERVICE",sub:["trimming • removal","stump grinding","free estimates"],alpha:["Gothic","Western","Casual"]},
+ {t:"Concrete / masonry",names:["Cornerstone","StoneWorks","Rivera"],emph:"CONCRETE",sub:["driveways • patios","stamped • flat","licensed"],alpha:["Egyptian","Gothic"]},
+ {t:"Pest control",names:["Sureguard","Bullseye","Tovar"],emph:"PEST CONTROL",sub:["termites • ants","free inspection","guaranteed"],alpha:["Gothic","Egyptian"]},
+ {t:"Auto detailing",names:["Showroom","MirrorShine","Lupe's"],emph:"AUTO DETAIL",sub:["wash • wax • buff","mobile service","by appt"],alpha:["Casual","Gothic"]},
+ {t:"Welding / fab",names:["Arc & Anvil","IronHand","Sparks"],emph:"WELDING",sub:["mobile welding","gates • railings","fabrication"],alpha:["Gothic","Western","Egyptian"]},
+ {t:"Moving",names:["Two Bros","Haul'em","Vega Movers"],emph:"MOVING",sub:["local • long distance","packing","free quote"],alpha:["Gothic","Phoenix"]},
+ {t:"Pressure washing",names:["BlastPro","Clear","RainMan"],emph:"PRESSURE WASH",sub:["houses • driveways","free estimate","soft wash"],alpha:["Casual","Gothic"]},
+ {t:"Pool service",names:["AquaTech","BlueWave","Marisol Pools"],emph:"POOL SERVICE",sub:["weekly cleaning","repairs","openings"],alpha:["Casual","Gothic"]},
+ {t:"Fencing",names:["Boundary","CedarLine","Ortiz Fence"],emph:"FENCING",sub:["wood • vinyl • chain","free estimates","installed"],alpha:["Gothic","Egyptian"]},
+ {t:"Handyman",names:["Fix-It","Mr. Fix","Handy Andy"],emph:"HANDYMAN",sub:["repairs • remodels","no job too small","reliable"],alpha:["Casual","Gothic"]},
+ {t:"Garage doors",names:["OverHead","LiftRite","Doorworks"],emph:"GARAGE DOORS",sub:["repair • install","springs","24-hr"],alpha:["Gothic","Egyptian"]},
+];
+const ID_TRSURF=['truck door lettering','van panel','12"×18" yard sign','A-frame','8 ft banner','magnetic door sign','job-site sign'];
+const ID_TRGROUND=['white truck + blue + red','black + gold','green + white','red + white','navy + orange','white + maroon'];
 let idCat='storefront';
 function rollIdea(){
   const card=document.getElementById('idCard');
+  if(idCat==='trade'){
+    const tr=idPick(ID_TRADE), name=idPick(tr.names), svc=idPick(tr.sub);
+    if(idMode==='simple'){ card.innerHTML=`<div class="biz">${name} &mdash; <span class="emph">${tr.emph}</span></div>`; return; }
+    const det=[['Emphasis',tr.emph],['Services',svc],['Format',idPick(ID_TRSURF)],['Alphabet',idPick(tr.alpha)],['Phone','put the number BIG'],['Colors',idPick(ID_TRGROUND)]];
+    card.innerHTML=`<div class="biz">${name} &mdash; <span class="emph">${tr.emph}</span></div><div class="det">`+
+      det.map(([k,v])=>`<div class="drow"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')+`</div>`;
+    return;
+  }
   if(idCat==='special'){
     const sp=idPick(ID_SPECIAL), sub=idPick(sp.sub);
     if(idMode==='simple'){ card.innerHTML=`<div class="biz">${sp.msg} &mdash; <span class="emph">${sub}</span></div>`; return; }
