@@ -174,6 +174,16 @@ To add a font to the preview dropdown:
 The font then appears in the "Preview font" selector on the A–Z tab.
 **Only the filename/label is used as-is — no renaming.**
 
+### Two separate font paths
+1. **Repo `fonts/` folder** (above) — baked into the site for everyone, feeds the
+   A–Z preview dropdown. Permanent + public.
+2. **In-app Font Previewer (Fonts tab)** — the user loads font files in their browser;
+   the font *data* now persists in **IndexedDB** (store `spc_fontdb`), so loaded fonts
+   survive reloads and work offline, on that device only. Nothing is uploaded anywhere.
+   Logic verified with a fake-indexeddb round-trip test (`_source/idbtest.mjs`).
+   Note: IndexedDB does NOT work over `file://` — test the Fonts tab over `http(s)://`
+   (run `python -m http.server` locally, or use the live Pages site).
+
 ---
 
 ## Validation pattern (use on every build)

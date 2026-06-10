@@ -581,7 +581,7 @@
 <section class="view" id="fonts">
   <div class="card">
     <h2>Font Previewer</h2>
-    <p class="sub">Load your own font files (.ttf / .otf / .woff) to preview and compare. Type any text, stack as many as you like. Each font's <b>name &amp; your notes are saved</b> below; the font files themselves aren't, so re-load a file to see it rendered.</p>
+    <p class="sub">Load your own font files (.ttf / .otf / .woff) to preview and compare. Type any text, stack as many as you like. <b>Your fonts are saved in this browser</b> &mdash; they stay loaded when you come back, even offline. Loading happens on your device only.</p>
     <label>Sample text</label>
     <input type="text" id="fontText" value="Sharp Quick Brown 1975" placeholder="Type sample text…">
     <label style="margin-top:12px">Preview size</label>
@@ -598,7 +598,7 @@
   <div id="fontStack"></div>
   <div class="card" id="savedFontsCard" style="display:none">
     <h2>My Font List <span class="badge">saved</span></h2>
-    <p class="sub">Every font you load is remembered here by name &mdash; add a note (what it's good for). This list persists on the live site; the font files themselves aren't stored, so re-load a file to see it rendered.</p>
+    <p class="sub">Every font you load is saved in this browser &mdash; add a note (what it's good for). They stay until you remove them (&times;).</p>
     <div id="savedFonts"></div>
   </div>
 </section>
@@ -1924,58 +1924,82 @@ rollIdea();
   const savedWrap=document.getElementById('savedFonts');
   const styleEl=document.createElement('style');
   document.head.appendChild(styleEl);
-  let loaded=[]; let n=0;
-  const KEY='spc_fonts';
+  let loaded=[];          // [{name, fam, note}] — fam = the @font-face family for this session
+  let n=0;
+  const esc=s=>(s||'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
 
-  /* ---- saved list (localStorage; degrades gracefully if unavailable) ---- */
-  function loadSaved(){
-    try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ return []; }
-  }
-  function writeSaved(list){
-    try{ localStorage.setItem(KEY, JSON.stringify(list)); }catch(e){}
-  }
-  function rememberFont(name){
-    const list=loadSaved();
-    if(!list.some(f=>f.name===name)){ list.push({name:name, note:''}); writeSaved(list); }
-    renderSaved();
-  }
-  function renderSaved(){
-    const list=loadSaved();
-    savedCard.style.display = list.length?'block':'none';
-    savedWrap.innerHTML = list.map((f,i)=>(
-      '<div class="line" style="display:flex;align-items:center;gap:8px;padding:9px 0">'+
-        '<span style="flex:0 0 auto;font-weight:600;color:var(--ink)">'+f.name.replace(/[<>&]/g,'')+'</span>'+
-        '<input data-i="'+i+'" class="fontNote" value="'+(f.note||'').replace(/"/g,'&quot;')+'" placeholder="note — what it\u2019s good for" '+
-          'style="flex:1 1 auto;min-width:0;background:var(--board2);border:1px solid var(--rule);border-radius:5px;color:var(--ink);padding:6px 9px;font-size:13px">'+
-        '<button data-i="'+i+'" class="fontForget" style="flex:0 0 auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">&times;</button>'+
-      '</div>'
-    )).join('');
-    savedWrap.querySelectorAll('.fontNote').forEach(inp=>{
-      inp.onchange=()=>{ const l=loadSaved(); l[+inp.dataset.i].note=inp.value; writeSaved(l); };
+  /* ---- IndexedDB store: the actual font data persists across reloads (and
+          works offline). Degrades to session-only if IDB is unavailable. ---- */
+  const DB='spc_fontdb', STORE='fonts';
+  let dbP=null;
+  function idb(){
+    if(dbP) return dbP;
+    dbP=new Promise((res,rej)=>{
+      let rq; try{ rq=indexedDB.open(DB,1); }catch(e){ return rej(e); }
+      rq.onupgradeneeded=()=>{ rq.result.createObjectStore(STORE,{keyPath:'name'}); };
+      rq.onsuccess=()=>res(rq.result);
+      rq.onerror=()=>rej(rq.error);
     });
-    savedWrap.querySelectorAll('.fontForget').forEach(b=>{
-      b.onclick=()=>{ const l=loadSaved(); l.splice(+b.dataset.i,1); writeSaved(l); renderSaved(); };
-    });
+    return dbP;
+  }
+  function store(mode){ return idb().then(db=>db.transaction(STORE,mode).objectStore(STORE)); }
+  function req(p){ return new Promise((res,rej)=>{ p.onsuccess=()=>res(p.result); p.onerror=()=>rej(p.error); }); }
+  function idbAll(){ return store('readonly').then(st=>req(st.getAll())).then(r=>r||[]).catch(()=>[]); }
+  function idbPut(rec){ return store('readwrite').then(st=>req(st.put(rec))).catch(()=>{}); }
+  function idbDel(name){ return store('readwrite').then(st=>req(st.delete(name))).catch(()=>{}); }
+  function idbClear(){ return store('readwrite').then(st=>req(st.clear())).catch(()=>{}); }
+
+  function fmtFor(name){
+    return /\.otf$/i.test(name)?'opentype' : /\.woff2$/i.test(name)?'woff2'
+         : /\.woff$/i.test(name)?'woff' : 'truetype';
+  }
+  function injectFace(data,fmt){
+    const fam='userfont'+(n++);
+    styleEl.appendChild(document.createTextNode(
+      "@font-face{font-family:'"+fam+"';src:url('"+data+"') format('"+fmt+"');}"
+    ));
+    return fam;
   }
 
-  /* ---- live previews ---- */
+  /* ---- live previews (the loaded font stack) ---- */
   function render(){
     const txt=textIn.value||'Abc 123';
     const sz=sizeIn.value;
-    const esc=s=>s.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
     stack.innerHTML = loaded.map(f=>(
       '<div class="card" style="padding:16px">'+
         '<div style="font-family:\'Oswald\',sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
           '<span>'+esc(f.name)+'</span>'+
-          '<button data-id="'+f.fam+'" class="fontDel" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1">&times;</button>'+
+          '<button data-nm="'+esc(f.name)+'" class="fontDel" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1">&times;</button>'+
         '</div>'+
         '<div style="font-family:\''+f.fam+'\';font-size:'+sz+'px;line-height:1.15;color:var(--ink);text-align:center;word-break:break-word">'+esc(txt)+'</div>'+
       '</div>'
     )).join('') || '<p class="sub" style="text-align:center;padding:24px 0">No fonts loaded yet. Tap <b>Load font files</b> above.</p>';
-    stack.querySelectorAll('.fontDel').forEach(b=>b.onclick=()=>{
-      loaded=loaded.filter(f=>f.fam!==b.dataset.id); render();
-    });
+    stack.querySelectorAll('.fontDel').forEach(b=>b.onclick=()=>forget(b.dataset.nm));
   }
+
+  /* ---- saved name + note list (same fonts, editable notes) ---- */
+  function renderSaved(){
+    savedCard.style.display = loaded.length?'block':'none';
+    savedWrap.innerHTML = loaded.map(f=>(
+      '<div class="line" style="display:flex;align-items:center;gap:8px;padding:9px 0">'+
+        '<span style="flex:0 0 auto;font-weight:600;color:var(--ink)">'+esc(f.name)+'</span>'+
+        '<input data-nm="'+esc(f.name)+'" class="fontNote" value="'+(f.note||'').replace(/"/g,'&quot;')+'" placeholder="note &mdash; what it is good for" '+
+          'style="flex:1 1 auto;min-width:0;background:var(--board2);border:1px solid var(--rule);border-radius:5px;color:var(--ink);padding:6px 9px;font-size:13px">'+
+        '<button data-nm="'+esc(f.name)+'" class="fontForget" style="flex:0 0 auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">&times;</button>'+
+      '</div>'
+    )).join('');
+    savedWrap.querySelectorAll('.fontNote').forEach(inp=>{
+      inp.onchange=()=>{
+        const f=loaded.find(x=>x.name===inp.dataset.nm); if(!f) return;
+        f.note=inp.value;
+        idbAll().then(list=>{ const rec=list.find(r=>r.name===f.name); if(rec){ rec.note=inp.value; idbPut(rec); } });
+      };
+    });
+    savedWrap.querySelectorAll('.fontForget').forEach(b=>b.onclick=()=>forget(b.dataset.nm));
+  }
+
+  function refresh(){ render(); renderSaved(); }
+  function forget(name){ loaded=loaded.filter(f=>f.name!==name); idbDel(name); refresh(); }
 
   fileIn.addEventListener('change',e=>{
     const files=[...e.target.files];
@@ -1984,26 +2008,36 @@ rollIdea();
     files.forEach(file=>{
       const r=new FileReader();
       const nm=file.name.replace(/\.[^.]+$/,'');
+      const fmt=fmtFor(file.name);
       r.onload=()=>{
-        const fam='userfont'+(n++);
-        const fmt = /\.otf$/i.test(file.name)?'opentype' : /\.woff2$/i.test(file.name)?'woff2' : /\.woff$/i.test(file.name)?'woff' : 'truetype';
-        styleEl.appendChild(document.createTextNode(
-          "@font-face{font-family:'"+fam+"';src:url('"+r.result+"') format('"+fmt+"');}"
-        ));
-        loaded.push({name:nm, fam});
-        rememberFont(nm);          // auto-save to the list
-        if(--pending===0) render();
+        const fam=injectFace(r.result,fmt);
+        loaded=loaded.filter(f=>f.name!==nm);      // replace if same name reloaded
+        loaded.push({name:nm, fam, note:''});
+        idbPut({name:nm, note:'', data:r.result, fmt:fmt});   // persist the file itself
+        if(--pending===0) refresh();
       };
-      r.onerror=()=>{ if(--pending===0) render(); };
+      r.onerror=()=>{ if(--pending===0) refresh(); };
       r.readAsDataURL(file);
     });
     fileIn.value='';
   });
-  clearBtn.addEventListener('click',()=>{ loaded=[]; render(); });
+  clearBtn.addEventListener('click',()=>{
+    if(loaded.length && !confirm('Remove all saved fonts from this browser?')) return;
+    loaded=[]; idbClear(); refresh();
+  });
   textIn.addEventListener('input',render);
   sizeIn.addEventListener('input',render);
-  render();
-  renderSaved();
+
+  /* ---- restore persisted fonts on load ---- */
+  idbAll().then(list=>{
+    list.forEach(rec=>{
+      if(!rec.data) return;
+      const fam=injectFace(rec.data, rec.fmt||fmtFor(rec.name));
+      loaded.push({name:rec.name, fam, note:rec.note||''});
+    });
+    refresh();
+  });
+  refresh();
 })();
 
 calcMargins();calcRows();calcLetters();calcSlope();calcShadow();calcContrast();calcScale();
