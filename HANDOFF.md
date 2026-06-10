@@ -10,8 +10,8 @@ offline-capable, installable to a home screen.
 no external dependencies except Google Fonts. Icon, manifest, and offline service
 worker are embedded in the file.
 
-_Last updated: session that set up local clone + automated deploy, added fonts/
-folder and custom font preview selector in A–Z tab._
+_Last updated: added Pen-Written Roman reference card (Gage 1924); confirmed Fonts
+tab already fully built; Kynaston lowercase/italic and additional books still open._
 
 ---
 
@@ -95,7 +95,8 @@ measurement converter.
 
 **Tools > Reference** — emphasis hierarchy, six alphabets, optical rules, ICS 1902
 spacing card, ICS 1902 shading card, Casual & Slope card (Gage 1924), Roman
-Construction card (Kynaston/DK 2024).
+Construction card (Kynaston/DK 2024), **Pen-Written Roman card (Gage 1924)** —
+nib pen thick/thin rules, proportions, per-letter notes.
 
 **Tools > Kit** — brush series numbers, paint/thinner, brush care, transfer methods,
 gilding checklist (Matthews), safety.
@@ -111,10 +112,16 @@ gilding checklist (Matthews), safety.
   Egyptian/Half-Block proportions.
 - **ICS, A Textbook on Lettering and Sign Painting (1902)** — spacing (by stroke,
   per family) + shading (45-deg light, five treatments). ~380pp, still largely unmined.
-- **Gage, Vel-Vet Show Cards (1924)** — casual/single-stroke method, slope rules.
-  More to mine: alphabet plates.
+- **Gage, Vel-Vet Show Cards (1924)** — casual/single-stroke method, slope rules,
+  pen-written Roman (thick/thin pen rules + per-letter notes). Available on
+  archive.org inside the "117 Vintage Lettering Books" collection
+  (identifier: wagner-blue-print-text-book-1946). More to mine: visual alphabet plates
+  (image-only, need photos/scans).
 - **Kynaston, Little Booklet of Roman Lettering (2024)** — DK Roman 10-point
   construction chart. More to mine: lowercase/italic Roman, stretching/condensing.
+  **Need source pages shared to add this.**
+- **Additional books on user's NAS** — to be uploaded in a future session. Drop PDFs
+  directly into chat or copy to a local path for Claude to read.
 - **Class Gothic chart photo** (Jurakart/Olson) — exact per-letter stems, in the app.
 
 ---
@@ -172,7 +179,10 @@ ink metrics in a live browser DOM.
 - **Job save/recall for the Sketcher** (localStorage; works on hosted site, not in
   sandboxed previews).
 - **More from ICS (1902)** — ~380pp, much unmined.
-- **More from Gage & Kynaston** — alphabet plates, lowercase/italic Roman.
+- **More from Gage** — visual alphabet plates (image-only in the PDF; need photos).
+- **Kynaston lowercase/italic Roman** — need source pages from the booklet.
+- **Additional books from NAS** — user has more lettering books to contribute;
+  drop PDFs in chat or copy to local path.
 
 ---
 
